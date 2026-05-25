@@ -127,6 +127,7 @@ button { font-family: inherit; cursor: pointer; }
   font-size: clamp(14px, 1.4vw, 16px); letter-spacing: .02em;
 }
 .brand-name { font-family: var(--serif); font-size: 1.25rem; letter-spacing: .04em; }
+.brand-logo { display: block; height: 48px; width: auto; }
 
 .site-nav { display: flex; align-items: center; }
 .nav-menu { display: flex; align-items: center; gap: clamp(18px, 2.4vw, 38px); }
@@ -372,6 +373,7 @@ button { font-family: inherit; cursor: pointer; }
 
 @media (max-width: 760px) {
   .nav-toggle { display: block; }
+  .brand-logo { height: 40px; }
   .nav-menu {
     position: absolute; top: 68px; left: 0; right: 0;
     flex-direction: column; align-items: stretch; gap: 0;
