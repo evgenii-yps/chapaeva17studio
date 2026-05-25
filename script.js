@@ -187,7 +187,7 @@
           else { setStatus((res && res.error) || 'Не удалось отправить заявку. Попробуйте позвонить нам.', true); }
         })
         .catch(function () {
-          setStatus('Нет связи с сервером. Позвоните: +7 906 276 29 99', true);
+          setStatus('Нет связи с сервером. Попробуйте позже или напишите нам в Telegram.', true);
         })
         .finally(function () {
           submitBtn.disabled = false;
