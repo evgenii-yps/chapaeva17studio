@@ -138,6 +138,13 @@ button { font-family: inherit; cursor: pointer; }
 .nav-menu > li > a:not(.btn):hover { color: var(--gold); }
 .nav-cta { padding: .7em 1.4em; }
 
+@media (min-width: 761px) {
+  .header-inner { justify-content: flex-start; gap: clamp(40px, 5vw, 64px); }
+  .site-nav { flex: 1; }
+  .nav-menu { flex: 1; }
+  .nav-menu > li:last-child { margin-left: auto; }
+}
+
 .nav-toggle { display: none; background: none; border: 0; width: 44px; height: 44px; padding: 10px; }
 .nav-toggle span { display: block; height: 1.5px; background: var(--ink); margin: 5px 0; transition: transform .3s ease, opacity .3s ease; }
 .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
