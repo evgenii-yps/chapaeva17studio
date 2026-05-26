@@ -3,7 +3,6 @@
   'use strict';
   var DATA = window.CH17_DATA || { promos: [], directions: [], team: [], troupe: [], faq: [] };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var noHover = window.matchMedia('(hover: none)').matches;
   var pageLoadedAt = Date.now();
 
   function el(tag, cls, html) {
@@ -255,7 +254,7 @@
       var card = el('li', 'team-card');
       card.setAttribute('tabindex', '0');
       card.setAttribute('role', 'button');
-      card.setAttribute('aria-label', t.name + ' — биография');
+      card.setAttribute('aria-label', t.name + ' — подробнее о тренере');
 
       var photo;
       if (t.photoJpg) {
@@ -284,12 +283,9 @@
       back.appendChild(backInner);
       card.appendChild(back);
 
-      if (noHover) {
-        var toggleCard = function () { card.classList.toggle('touched'); };
-        card.addEventListener('click', toggleCard);
-      }
+      card.addEventListener('click', function () { openTeamModal(t, card); });
       card.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('touched'); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTeamModal(t, card); }
       });
       grid.appendChild(card);
     });
@@ -298,6 +294,117 @@
     if (troupeEl && DATA.troupe && DATA.troupe.length) {
       troupeEl.textContent = 'Также с нами работают: ' + DATA.troupe.join(' · ') + '.';
     }
+  }
+
+  /* ============================================================
+     МОДАЛКА ТРЕНЕРА
+     ============================================================ */
+  var teamModal = $('team-modal');
+  var teamModalOpener = null;
+
+  /* Подбор направления формы по специализации тренера (для предзаполнения) */
+  function matchDirection(role) {
+    var options = ['Пилатес на оборудовании', 'Пилатес на матах', 'Хореография', 'Йога', 'Растяжка', 'Массаж и восстановление', 'Балетный интенсив'];
+    var keywordMap = [
+      { re: /пилатес/i, value: 'Пилатес на оборудовании' },
+      { re: /балет|классик|хореограф|barre/i, value: 'Хореография' },
+      { re: /йог|кундалини|виброакустик|хатха/i, value: 'Йога' },
+      { re: /растяж|стрейч/i, value: 'Растяжка' },
+      { re: /массаж|остеопат|восстановл/i, value: 'Массаж и восстановление' }
+    ];
+    var parts = String(role || '').split('·');
+    for (var i = 0; i < parts.length; i++) {
+      for (var k = 0; k < keywordMap.length; k++) {
+        if (keywordMap[k].re.test(parts[i]) && options.indexOf(keywordMap[k].value) !== -1) {
+          return keywordMap[k].value;
+        }
+      }
+    }
+    return null;
+  }
+
+  function teamModalFocusable() {
+    if (!teamModal) return [];
+    return [].slice.call(teamModal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )).filter(function (n) { return !n.hasAttribute('disabled') && n.offsetParent !== null; });
+  }
+
+  function openTeamModal(t, opener) {
+    if (!teamModal) return;
+    teamModalOpener = opener || document.activeElement;
+
+    var photo = $('team-modal-photo');
+    if (t.photoJpg) {
+      photo.className = 'team-modal-photo';
+      photo.innerHTML =
+        '<picture>' +
+        (t.photoWebp ? '<source srcset="' + t.photoWebp + '" type="image/webp">' : '') +
+        '<img src="' + t.photoJpg + '" alt="' + esc(t.name) + '" decoding="async">' +
+        '</picture>';
+    } else {
+      photo.className = 'team-modal-photo team-modal-photo--placeholder';
+      photo.innerHTML = '<span aria-hidden="true">' + esc(t.initials || '') + '</span>';
+    }
+
+    $('team-modal-name').textContent = t.name;
+
+    var chips = $('team-modal-chips');
+    chips.innerHTML = '';
+    String(t.role || '').split('·').forEach(function (part) {
+      var label = part.trim();
+      if (label) chips.appendChild(el('li', 'team-modal-chip', esc(label)));
+    });
+
+    $('team-modal-bio').textContent = t.bio || '';
+
+    var cta = $('team-modal-cta');
+    var direction = matchDirection(t.role);
+    cta.onclick = function () {
+      closeTeamModal();
+      var sel = $('f-direction');
+      if (sel && direction) sel.value = direction;
+      scrollToId('booking');
+    };
+
+    teamModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { teamModal.classList.add('is-open'); });
+    teamModal.querySelector('.team-modal-close').focus();
+  }
+
+  function closeTeamModal() {
+    if (!teamModal || teamModal.hidden) return;
+    teamModal.classList.remove('is-open');
+    var done = function () {
+      teamModal.hidden = true;
+      teamModal.removeEventListener('transitionend', done);
+    };
+    if (reduceMotion) done();
+    else {
+      teamModal.addEventListener('transitionend', done);
+      setTimeout(done, 320);
+    }
+    document.body.style.overflow = '';
+    if (teamModalOpener && typeof teamModalOpener.focus === 'function') teamModalOpener.focus();
+  }
+
+  if (teamModal) {
+    teamModal.querySelector('.team-modal-close').addEventListener('click', closeTeamModal);
+    teamModal.addEventListener('click', function (e) {
+      if (e.target.hasAttribute('data-close')) closeTeamModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (teamModal.hidden) return;
+      if (e.key === 'Escape') { closeTeamModal(); return; }
+      if (e.key === 'Tab') {
+        var f = teamModalFocusable();
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
   }
 
   /* ============================================================

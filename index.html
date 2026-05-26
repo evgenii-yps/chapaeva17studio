@@ -187,7 +187,7 @@
         <div class="section-head">
           <p class="eyebrow">Команда</p>
           <h2 class="h2" id="team-title">Те, кто ведёт</h2>
-          <p class="lead team-sub">Действующие солисты театров и чемпион мира по ушу. Не сертификат на стене, а настоящий опыт сцены. Наведите на карточку, чтобы прочесть биографию.</p>
+          <p class="lead team-sub">Действующие солисты театров и чемпион мира по ушу. Не сертификат на стене, а настоящий опыт сцены. Нажмите на карточку, чтобы узнать больше о тренере.</p>
         </div>
         <ul class="team-grid" id="team-grid"></ul>
         <p class="troupe" id="troupe"></p>
@@ -446,6 +446,22 @@
       <p class="footer-note">* Instagram заблокирован в РФ</p>
     </div>
   </footer>
+
+  <!-- Модалка тренера -->
+  <div class="team-modal" id="team-modal" hidden>
+    <div class="team-modal-backdrop" data-close></div>
+    <div class="team-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="team-modal-name">
+      <button class="team-modal-close" type="button" aria-label="Закрыть">×</button>
+      <div class="team-modal-photo" id="team-modal-photo"></div>
+      <div class="team-modal-body">
+        <p class="eyebrow team-modal-eyebrow">Команда</p>
+        <h3 class="team-modal-name" id="team-modal-name"></h3>
+        <ul class="team-modal-chips" id="team-modal-chips"></ul>
+        <p class="team-modal-bio" id="team-modal-bio"></p>
+        <button class="btn btn-primary team-modal-cta" type="button" id="team-modal-cta">Записаться к тренеру</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox" hidden>
