@@ -1,16 +1,32 @@
 /* Чапаева 17 — interactions (vanilla JS) */
 (function () {
   'use strict';
+  var DATA = window.CH17_DATA || { promos: [], directions: [], team: [], troupe: [], faq: [] };
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var noHover = window.matchMedia('(hover: none)').matches;
   var pageLoadedAt = Date.now();
 
+  function el(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function rub(n) { return Number(n).toLocaleString('ru-RU') + ' ₽'; }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function $(id) { return document.getElementById(id); }
+
   /* ---------- year ---------- */
-  var yearEl = document.getElementById('year');
+  var yearEl = $('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ---------- mobile nav ---------- */
   var toggle = document.querySelector('.nav-toggle');
-  var menu = document.getElementById('nav-menu');
+  var menu = $('nav-menu');
   if (toggle && menu) {
     toggle.addEventListener('click', function () {
       var open = menu.classList.toggle('is-open');
@@ -24,32 +40,29 @@
     });
   }
 
-  /* ---------- hero letter animation (words kept unbreakable) ---------- */
+  /* ---------- hero letter animation ---------- */
   var title = document.querySelector('[data-letters]');
   if (title) {
     var text = title.textContent.trim();
     title.textContent = '';
     var i = 0;
-    var words = text.split(' ');
-    words.forEach(function (word, w) {
-      var wordSpan = document.createElement('span');
-      wordSpan.className = 'word';
+    text.split(' ').forEach(function (word, w, arr) {
+      var wordSpan = el('span', 'word');
       wordSpan.style.whiteSpace = 'nowrap';
       word.split('').forEach(function (ch) {
-        var span = document.createElement('span');
-        span.className = 'ltr';
+        var span = el('span', 'ltr');
         span.textContent = ch;
         if (!reduceMotion) {
           span.style.opacity = '0';
           span.style.transform = 'translateY(0.25em)';
           span.style.transition = 'opacity .6s ease, transform .6s ease';
-          span.style.transitionDelay = (i * 0.07) + 's';
+          span.style.transitionDelay = (i * 0.09) + 's';
         }
         wordSpan.appendChild(span);
         i++;
       });
       title.appendChild(wordSpan);
-      if (w < words.length - 1) { title.appendChild(document.createTextNode(' ')); i++; }
+      if (w < arr.length - 1) { title.appendChild(document.createTextNode(' ')); i++; }
     });
     if (!reduceMotion) {
       requestAnimationFrame(function () {
@@ -63,14 +76,357 @@
     }
   }
 
+  /* ============================================================
+     ПРОМО-СЧЁТЧИКИ (localStorage)
+     ============================================================ */
+  var counterEls = {}; // promoId -> [DOM nodes to update текстом N]
+  function counterKey(id) { return 'ch17_promo_count_' + id; }
+
+  function getCount(promo) {
+    if (!promo.counter) return null;
+    var key = counterKey(promo.id);
+    var stored = null;
+    try { stored = window.localStorage.getItem(key); } catch (e) {}
+    var n = stored != null ? parseInt(stored, 10) : NaN;
+    if (isNaN(n)) {
+      n = promo.counter.current;
+      try { window.localStorage.setItem(key, String(n)); } catch (e) {}
+    }
+    var min = promo.counter.min != null ? promo.counter.min : 1;
+    if (n < min) n = min;
+    return n;
+  }
+  function setCount(promo, n) {
+    try { window.localStorage.setItem(counterKey(promo.id), String(n)); } catch (e) {}
+    (counterEls[promo.id] || []).forEach(function (entry) {
+      if (entry.type === 'num') entry.node.textContent = n;
+      else if (entry.type === 'bar') entry.node.style.width = (n / promo.counter.total * 100) + '%';
+      else if (entry.type === 'marquee') entry.node.textContent = entry.tpl.replace('{N}', n);
+    });
+  }
+  function registerCounter(promoId, entry) {
+    (counterEls[promoId] = counterEls[promoId] || []).push(entry);
+  }
+
+  function startCounterTicks() {
+    DATA.promos.forEach(function (promo) {
+      if (!promo.active || !promo.counter) return;
+      var min = promo.counter.min != null ? promo.counter.min : 1;
+      function tick() {
+        var n = getCount(promo);
+        if (n > min && Math.random() < 0.3) { setCount(promo, n - 1); }
+        if (getCount(promo) > min) {
+          setTimeout(tick, 3000 + Math.random() * 2000);
+        }
+      }
+      if (getCount(promo) > min) setTimeout(tick, 3000 + Math.random() * 2000);
+    });
+  }
+
+  /* ============================================================
+     БЕГУЩАЯ СТРОКА
+     ============================================================ */
+  function renderMarquee() {
+    var section = $('marquee');
+    var track = $('marquee-track');
+    if (!section || !track) return;
+    var active = DATA.promos.filter(function (p) { return p.active && p.marquee; });
+    if (!active.length) { section.hidden = true; return; }
+    section.hidden = false;
+
+    function buildItem(p) {
+      var item = el('span', 'marquee-item');
+      var raw = p.marquee;
+      if (p.counterRef) {
+        var ref = DATA.promos.filter(function (x) { return x.id === p.counterRef; })[0];
+        var n = ref ? getCount(ref) : 0;
+        item.textContent = raw.replace('{N}', n);
+        if (ref) registerCounter(ref.id, { type: 'marquee', node: item, tpl: raw });
+      } else if (p.emphasis && raw.indexOf(p.emphasis) !== -1) {
+        var idx = raw.indexOf(p.emphasis);
+        item.appendChild(document.createTextNode(raw.slice(0, idx)));
+        item.appendChild(el('span', 'hl', esc(p.emphasis)));
+        item.appendChild(document.createTextNode(raw.slice(idx + p.emphasis.length)));
+      } else {
+        item.textContent = raw;
+      }
+      return item;
+    }
+
+    // одна последовательность = все акции через разделитель
+    function buildSequence() {
+      var frag = document.createDocumentFragment();
+      active.forEach(function (p) {
+        frag.appendChild(buildItem(p));
+        frag.appendChild(el('span', 'marquee-sep', '·'));
+      });
+      return frag;
+    }
+
+    // дублируем, пока ширина не превысит ~2× окна (минимум 2 копии для бесшовного цикла)
+    track.appendChild(buildSequence());
+    var guard = 0;
+    while (track.scrollWidth < window.innerWidth * 1.5 && guard < 12) {
+      track.appendChild(buildSequence());
+      guard++;
+    }
+    // дублируем весь набор ещё раз — вторая половина для бесшовного цикла -50%.
+    // N в бегущей строке фиксируется на значении при загрузке (живой апдейт —
+    // только в карточке «Не упусти»); сбрасываем мёртвые ссылки на узлы.
+    track.innerHTML = track.innerHTML + track.innerHTML;
+    counterEls = {};
+  }
+
+  /* ============================================================
+     НЕ УПУСТИ — карточки
+     ============================================================ */
+  function renderPromoCards() {
+    var section = $('promos');
+    var grid = $('promo-grid');
+    var countEl = $('promos-count');
+    if (!section || !grid) return;
+    var active = DATA.promos.filter(function (p) { return p.active && p.title; });
+    if (!active.length) { section.hidden = true; return; }
+    section.hidden = false;
+    if (countEl) countEl.textContent = active.length + ' активных';
+
+    active.forEach(function (p) {
+      var card = el('article', 'promo-card' + (p.hot ? ' promo-card--hot' : ''));
+
+      if (p.tag) card.appendChild(el('span', 'promo-tag', esc(p.tag)));
+
+      var titleHtml = esc(p.title);
+      if (p.emphasis && p.title.indexOf(p.emphasis) !== -1) {
+        titleHtml = esc(p.title).replace(esc(p.emphasis), '<span class="em">' + esc(p.emphasis) + '</span>');
+      }
+      card.appendChild(el('h3', 'promo-title', titleHtml));
+
+      if (p.description) card.appendChild(el('p', 'promo-desc', esc(p.description)));
+
+      if (p.counter) {
+        var n = getCount(p);
+        var counterWrap = el('div', 'promo-counter');
+        var label = el('p', 'promo-counter-label', '<b>' + n + '</b> ' + esc(p.counter.label));
+        var bar = el('div', 'promo-progress');
+        var fill = el('span');
+        fill.style.width = (n / p.counter.total * 100) + '%';
+        bar.appendChild(fill);
+        counterWrap.appendChild(label);
+        counterWrap.appendChild(bar);
+        card.appendChild(counterWrap);
+        registerCounter(p.id, { type: 'num', node: label.querySelector('b') });
+        registerCounter(p.id, { type: 'bar', node: fill });
+      }
+
+      var foot = el('div', 'promo-foot');
+      var status = el('p', 'promo-status');
+      status.appendChild(el('span', 'dot dot--pulse'));
+      status.appendChild(document.createTextNode(p.status || p.meta || ''));
+      foot.appendChild(status);
+
+      var cta = el('button', 'promo-cta');
+      cta.type = 'button';
+      cta.innerHTML = esc(p.ctaText || 'Подробнее') + ' →';
+      cta.addEventListener('click', function () { runCtaAction(p.ctaAction); });
+      foot.appendChild(cta);
+
+      card.appendChild(foot);
+      grid.appendChild(card);
+    });
+  }
+
+  function runCtaAction(action) {
+    if (action === 'scroll-to-prices') scrollToId('prices');
+    else if (action === 'scroll-to-form') scrollToId('booking');
+    else if (action === 'open-direct') window.open(DATA.directOpenUrl || 'https://instagram.com/chapaeva17_studio', '_blank', 'noopener');
+  }
+  function scrollToId(id) {
+    var t = $(id);
+    if (t) t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  /* ============================================================
+     КОМАНДА
+     ============================================================ */
+  function renderTeam() {
+    var grid = $('team-grid');
+    if (!grid) return;
+    DATA.team.forEach(function (t) {
+      var card = el('li', 'team-card');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', t.name + ' — биография');
+
+      var photo;
+      if (t.photoJpg) {
+        photo = el('div', 'team-card-photo');
+        photo.innerHTML =
+          '<picture>' +
+          (t.photoWebp ? '<source srcset="' + t.photoWebp + '" type="image/webp">' : '') +
+          '<img src="' + t.photoJpg + '" alt="' + esc(t.name) + '" loading="lazy" decoding="async">' +
+          '</picture>';
+      } else {
+        photo = el('div', 'team-card-placeholder', esc(t.initials || ''));
+        photo.setAttribute('aria-hidden', 'true');
+      }
+      card.appendChild(photo);
+
+      var front = el('div', 'team-card-front');
+      front.appendChild(el('span', 'team-card-hint', 'наведи ↘'));
+      front.appendChild(el('h3', 'team-card-name', esc(t.name)));
+      front.appendChild(el('p', 'team-card-role', esc(t.role)));
+      card.appendChild(front);
+
+      var back = el('div', 'team-card-back');
+      var backInner = el('div');
+      backInner.appendChild(el('p', 'team-card-name', esc(t.name)));
+      backInner.appendChild(el('p', null, esc(t.bio)));
+      back.appendChild(backInner);
+      card.appendChild(back);
+
+      if (noHover) {
+        var toggleCard = function () { card.classList.toggle('touched'); };
+        card.addEventListener('click', toggleCard);
+      }
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.classList.toggle('touched'); }
+      });
+      grid.appendChild(card);
+    });
+
+    var troupeEl = $('troupe');
+    if (troupeEl && DATA.troupe && DATA.troupe.length) {
+      troupeEl.textContent = 'Также с нами работают: ' + DATA.troupe.join(' · ') + '.';
+    }
+  }
+
+  /* ============================================================
+     АККОРДЕОНЫ (направления + FAQ)
+     ============================================================ */
+  function buildAccItem(opts) {
+    // opts: num, name, sub, price, panelNodes[], idBase
+    var item = el('div', 'acc-item');
+    var btn = el('button', 'acc-head');
+    btn.type = 'button';
+    btn.setAttribute('aria-expanded', 'false');
+    var panelId = opts.idBase + '-panel';
+    btn.setAttribute('aria-controls', panelId);
+
+    if (opts.num) btn.appendChild(el('span', 'acc-num', opts.num));
+    var titles = el('div', 'acc-titles');
+    titles.appendChild(el('span', 'acc-name', esc(opts.name)));
+    if (opts.sub) titles.appendChild(el('span', 'acc-sub', esc(opts.sub)));
+    btn.appendChild(titles);
+    if (opts.price) btn.appendChild(el('span', 'acc-price', opts.price));
+    btn.appendChild(el('span', 'acc-toggle'));
+
+    var panel = el('div', 'acc-panel');
+    panel.id = panelId;
+    panel.setAttribute('role', 'region');
+    var inner = el('div', 'acc-panel-inner');
+    opts.panelNodes.forEach(function (n) { inner.appendChild(n); });
+    panel.appendChild(inner);
+
+    item.appendChild(btn);
+    item.appendChild(panel);
+    return { item: item, btn: btn, panel: panel };
+  }
+
+  function wireAccordion(container) {
+    var items = [].slice.call(container.querySelectorAll('.acc-item'));
+    items.forEach(function (item) {
+      var btn = item.querySelector('.acc-head');
+      var panel = item.querySelector('.acc-panel');
+      btn.addEventListener('click', function () {
+        var isOpen = item.classList.contains('is-open');
+        items.forEach(function (other) {
+          if (other === item) return;
+          other.classList.remove('is-open');
+          other.querySelector('.acc-head').setAttribute('aria-expanded', 'false');
+          other.querySelector('.acc-panel').style.maxHeight = '';
+        });
+        if (isOpen) {
+          item.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          panel.style.maxHeight = '';
+        } else {
+          item.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+          panel.style.maxHeight = panel.scrollHeight + 'px';
+        }
+      });
+    });
+    // пересчёт высоты при ресайзе для открытого
+    window.addEventListener('resize', function () {
+      var open = container.querySelector('.acc-item.is-open .acc-panel');
+      if (open) open.style.maxHeight = open.scrollHeight + 'px';
+    });
+  }
+
+  function fmtFormatPrice(f) {
+    if (f.price == null) return { text: 'tbd', tbd: true };
+    var pre = '';
+    if (f.prefix === '~') pre = '~';
+    else if (f.prefix) pre = f.prefix + ' ';
+    return { text: pre + rub(f.price), tbd: false };
+  }
+
+  function renderDirections() {
+    var container = $('directions-accordion');
+    if (!container) return;
+    DATA.directions.forEach(function (d) {
+      var desc = el('p', 'acc-desc', esc(d.description));
+      var matrix = el('div', 'format-grid');
+      (d.formats || []).forEach(function (f) {
+        var fc = el('div', 'format-card');
+        fc.appendChild(el('span', 'format-name', esc(f.name)));
+        var p = fmtFormatPrice(f);
+        fc.appendChild(el('span', 'format-price' + (p.tbd ? ' format-price--tbd' : ''), p.text));
+        matrix.appendChild(fc);
+      });
+      var price = d.fixed ? rub(d.rangeFrom) : 'от ' + rub(d.rangeFrom);
+      var built = buildAccItem({
+        num: d.num, name: d.name, sub: d.sub, price: price,
+        panelNodes: [desc, matrix], idBase: 'dir-' + d.id
+      });
+      container.appendChild(built.item);
+    });
+    wireAccordion(container);
+  }
+
+  function renderFaq() {
+    var container = $('faq-accordion');
+    if (!container) return;
+    DATA.faq.forEach(function (item, idx) {
+      var answer = el('p', 'acc-desc', esc(item.a));
+      var built = buildAccItem({
+        name: item.q, panelNodes: [answer], idBase: 'faq-' + idx
+      });
+      container.appendChild(built.item);
+    });
+    wireAccordion(container);
+  }
+
+  /* ============================================================
+     РЕНДЕР
+     ============================================================ */
+  renderMarquee();
+  renderPromoCards();
+  renderTeam();
+  renderDirections();
+  renderFaq();
+  startCounterTicks();
+
   /* ---------- reveal on scroll ---------- */
   var revealEls = [].slice.call(document.querySelectorAll(
-    '.manifesto-inner, .section-head, .direction, .olesya, .olesya-gallery, .trainer-card, .troupe, .gallery > li, .intensive-inner, .contacts-info, .contacts-map, .booking-form'
+    '.section-head, .promo-card, .about-epigraph, .about-text, .legacy-card, ' +
+    '.team-card, .troupe, .acc-item, .space-item, .space-note, .trial-card, ' +
+    '.booking-form-col, .booking-info, .contacts-map, .contacts-info'
   ));
   if (reduceMotion || !('IntersectionObserver' in window)) {
-    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+    revealEls.forEach(function (e) { e.classList.add('is-visible'); });
   } else {
-    revealEls.forEach(function (el) { el.classList.add('reveal'); });
+    revealEls.forEach(function (e) { e.classList.add('reveal'); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -79,11 +435,27 @@
         }
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
-    revealEls.forEach(function (el) { io.observe(el); });
+    revealEls.forEach(function (e) { io.observe(e); });
   }
 
-  /* ---------- intensive → prefill direction ---------- */
-  var directionSelect = document.getElementById('f-direction');
+  /* ---------- header theme inversion on dark sections ---------- */
+  var header = document.querySelector('.site-header');
+  var darkSections = [].slice.call(document.querySelectorAll('[data-header-theme="dark"], .section--dark'));
+  if (header && darkSections.length) {
+    var onScroll = function () {
+      var line = header.offsetHeight * 0.5;
+      var dark = darkSections.some(function (s) {
+        var r = s.getBoundingClientRect();
+        return r.top <= line && r.bottom >= line;
+      });
+      header.classList.toggle('is-dark', dark);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  /* ---------- prefill direction from CTA ---------- */
+  var directionSelect = $('f-direction');
   document.querySelectorAll('[data-prefill]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       if (directionSelect) directionSelect.value = btn.getAttribute('data-prefill');
@@ -91,8 +463,8 @@
   });
 
   /* ---------- lightbox ---------- */
-  var lightbox = document.getElementById('lightbox');
-  var lightboxImg = document.getElementById('lightbox-img');
+  var lightbox = $('lightbox');
+  var lightboxImg = $('lightbox-img');
   var galleryButtons = [].slice.call(document.querySelectorAll('.gallery-item'));
   var currentIndex = 0;
   var lastFocused = null;
@@ -117,7 +489,7 @@
     currentIndex = (currentIndex + dir + galleryButtons.length) % galleryButtons.length;
     openLightbox(currentIndex);
   }
-  if (lightbox) {
+  if (lightbox && galleryButtons.length) {
     galleryButtons.forEach(function (btn, idx) {
       btn.addEventListener('click', function () { openLightbox(idx); });
     });
@@ -133,16 +505,33 @@
     });
   }
 
+  /* ---------- toast ---------- */
+  var toastEl = $('toast');
+  var toastTimer = null;
+  function showToast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.hidden = false;
+    requestAnimationFrame(function () { toastEl.classList.add('is-visible'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('is-visible');
+      setTimeout(function () { toastEl.hidden = true; }, 320);
+    }, 3500);
+  }
+
   /* ---------- form submit ---------- */
-  var form = document.getElementById('booking-form');
-  var status = document.getElementById('form-status');
-  var thanks = document.getElementById('booking-thanks');
+  var form = $('booking-form');
+  var status = $('form-status');
+  var thanks = $('booking-thanks');
 
   function setStatus(msg, isError) {
+    if (!status) return;
     status.textContent = msg || '';
     status.classList.toggle('is-error', !!isError);
   }
   function showThanks() {
+    showToast('✓ Заявка отправлена. Напишем в течение часа');
     if (!thanks || !form) return;
     form.hidden = true;
     thanks.hidden = false;
@@ -163,11 +552,7 @@
         _honey: form._honey.value
       };
 
-      // honeypot + too-fast submission = bot, silently "succeed"
-      if (data._honey || (Date.now() - pageLoadedAt) < 2000) {
-        showThanks();
-        return;
-      }
+      if (data._honey || (Date.now() - pageLoadedAt) < 2000) { showThanks(); return; }
       if (data.name.length < 2) { setStatus('Пожалуйста, укажите имя.', true); form.name.focus(); return; }
       if (data.phone.length < 6) { setStatus('Пожалуйста, укажите телефон.', true); form.phone.focus(); return; }
 
