@@ -361,10 +361,15 @@
     var cta = $('team-modal-cta');
     var direction = matchDirection(t.role);
     cta.onclick = function () {
-      closeTeamModal();
       var sel = $('f-direction');
       if (sel && direction) sel.value = direction;
-      scrollToId('booking');
+      closeTeamModal(false);
+      var target = $('booking');
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      var firstField = $('f-name');
+      if (firstField) {
+        setTimeout(function () { firstField.focus({ preventScroll: true }); }, reduceMotion ? 0 : 450);
+      }
     };
 
     teamModal.hidden = false;
@@ -373,7 +378,7 @@
     teamModal.querySelector('.team-modal-close').focus();
   }
 
-  function closeTeamModal() {
+  function closeTeamModal(returnFocus) {
     if (!teamModal || teamModal.hidden) return;
     teamModal.classList.remove('is-open');
     var done = function () {
@@ -386,7 +391,9 @@
       setTimeout(done, 320);
     }
     document.body.style.overflow = '';
-    if (teamModalOpener && typeof teamModalOpener.focus === 'function') teamModalOpener.focus();
+    if (returnFocus !== false && teamModalOpener && typeof teamModalOpener.focus === 'function') {
+      teamModalOpener.focus();
+    }
   }
 
   if (teamModal) {
