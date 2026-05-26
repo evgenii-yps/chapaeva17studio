@@ -39,6 +39,18 @@
     });
   }
 
+  /* ---------- логотип → плавно наверх, без #top в URL ---------- */
+  var brand = document.querySelector('.site-header .brand');
+  if (brand) {
+    brand.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (window.history && history.replaceState) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    });
+  }
+
   /* ---------- hero letter animation ---------- */
   var title = document.querySelector('[data-letters]');
   if (title) {
