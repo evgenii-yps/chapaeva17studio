@@ -6,9 +6,7 @@ window.CH17_DATA = (function () {
 
   /* --------------------------------------------------------
      АКЦИИ
-     marquee  — короткий текст для бегущей строки ({N} = текущее
-                значение счётчика акции из counterRef)
-     остальные поля — для карточки в блоке «Не упусти».
+     Поля — для карточки в блоке «Не упусти».
      Карточка рендерится только если active && есть title.
      ctaAction: scroll-to-prices | scroll-to-form | open-direct
   -------------------------------------------------------- */
@@ -17,7 +15,6 @@ window.CH17_DATA = (function () {
       id: 'spring20',
       active: true,
       hot: false,
-      marquee: '−20% на знакомство · первым 20 клиентам',
       tag: 'Знакомство',
       title: '−20% на первое занятие',
       emphasis: '−20%',
@@ -32,7 +29,6 @@ window.CH17_DATA = (function () {
       id: 'ballet-intensive-summer',
       active: true,
       hot: true,
-      marquee: 'Балетный интенсив · старт 1 июня',
       tag: 'До 30 июня',
       title: 'Балетный интенсив — 30 000 ₽',
       emphasis: '30 000 ₽',

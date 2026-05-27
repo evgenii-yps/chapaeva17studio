@@ -270,32 +270,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-dot.is-active { background: #d4b87a; border-color: #d4b87a; }
 
 /* ============================================================
-   БЕГУЩАЯ СТРОКА
-   ============================================================ */
-.marquee {
-  background: var(--charcoal); color: var(--cream);
-  overflow: hidden; padding: 14px 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-.marquee[hidden] { display: none; }
-.marquee-track {
-  display: inline-flex; white-space: nowrap; will-change: transform;
-  animation: marquee-scroll 30s linear infinite;
-}
-.marquee:hover .marquee-track { animation-play-state: paused; }
-.marquee-item {
-  font-family: var(--serif); font-size: clamp(15px, 1.6vw, 19px); letter-spacing: .04em;
-  color: rgba(240,234,224,.85); padding: 0 1.4em;
-}
-.marquee-item .hl { color: var(--gold-light); }
-.marquee-sep { color: rgba(240,234,224,.4); }
-@keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
-}
-
-/* ============================================================
    НЕ УПУСТИ
    ============================================================ */
 .promos { background: var(--cream-warm); }

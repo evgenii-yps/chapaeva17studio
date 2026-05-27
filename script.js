@@ -162,7 +162,6 @@
     (counterEls[promo.id] || []).forEach(function (entry) {
       if (entry.type === 'num') entry.node.textContent = n;
       else if (entry.type === 'bar') entry.node.style.width = (n / promo.counter.total * 100) + '%';
-      else if (entry.type === 'marquee') entry.node.textContent = entry.tpl.replace('{N}', n);
     });
   }
   function registerCounter(promoId, entry) {
@@ -182,60 +181,6 @@
       }
       if (getCount(promo) > min) setTimeout(tick, 3000 + Math.random() * 2000);
     });
-  }
-
-  /* ============================================================
-     БЕГУЩАЯ СТРОКА
-     ============================================================ */
-  function renderMarquee() {
-    var section = $('marquee');
-    var track = $('marquee-track');
-    if (!section || !track) return;
-    var active = DATA.promos.filter(function (p) { return p.active && p.marquee; });
-    if (!active.length) { section.hidden = true; return; }
-    section.hidden = false;
-
-    function buildItem(p) {
-      var item = el('span', 'marquee-item');
-      var raw = p.marquee;
-      if (p.counterRef) {
-        var ref = DATA.promos.filter(function (x) { return x.id === p.counterRef; })[0];
-        var n = ref ? getCount(ref) : 0;
-        item.textContent = raw.replace('{N}', n);
-        if (ref) registerCounter(ref.id, { type: 'marquee', node: item, tpl: raw });
-      } else if (p.emphasis && raw.indexOf(p.emphasis) !== -1) {
-        var idx = raw.indexOf(p.emphasis);
-        item.appendChild(document.createTextNode(raw.slice(0, idx)));
-        item.appendChild(el('span', 'hl', esc(p.emphasis)));
-        item.appendChild(document.createTextNode(raw.slice(idx + p.emphasis.length)));
-      } else {
-        item.textContent = raw;
-      }
-      return item;
-    }
-
-    // одна последовательность = все акции через разделитель
-    function buildSequence() {
-      var frag = document.createDocumentFragment();
-      active.forEach(function (p) {
-        frag.appendChild(buildItem(p));
-        frag.appendChild(el('span', 'marquee-sep', '·'));
-      });
-      return frag;
-    }
-
-    // дублируем, пока ширина не превысит ~2× окна (минимум 2 копии для бесшовного цикла)
-    track.appendChild(buildSequence());
-    var guard = 0;
-    while (track.scrollWidth < window.innerWidth * 1.5 && guard < 12) {
-      track.appendChild(buildSequence());
-      guard++;
-    }
-    // дублируем весь набор ещё раз — вторая половина для бесшовного цикла -50%.
-    // N в бегущей строке фиксируется на значении при загрузке (живой апдейт —
-    // только в карточке «Не упусти»); сбрасываем мёртвые ссылки на узлы.
-    track.innerHTML = track.innerHTML + track.innerHTML;
-    counterEls = {};
   }
 
   /* ============================================================
@@ -943,7 +888,6 @@
   /* ============================================================
      РЕНДЕР
      ============================================================ */
-  renderMarquee();
   renderPromoCards();
   renderTeam();
   renderDirections();
