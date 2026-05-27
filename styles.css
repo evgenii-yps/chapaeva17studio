@@ -816,6 +816,8 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .equipment-modal[hidden] { display: none; }
 .equipment-modal {
   position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: clamp(16px, 4vw, 48px);
   opacity: 0;
   transition: opacity .25s ease;
 }
@@ -823,15 +825,19 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .equipment-modal-backdrop {
   position: absolute; inset: 0;
   background: rgba(20, 20, 18, 0.78);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 .equipment-modal-dialog {
-  position: relative;
-  width: 100vw; height: 100vh; height: 100svh;
+  position: relative; z-index: 1;
+  width: min(1100px, 100%);
+  height: min(720px, 88vh);
   background: var(--cream);
+  border-radius: var(--radius);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .45);
   overflow: hidden;
+  transform: scale(.96);
+  transition: transform .22s ease;
 }
+.equipment-modal.is-open .equipment-modal-dialog { transform: scale(1); }
 
 /* topbar — eyebrow слева, счётчик + крестик справа */
 .equipment-modal-topbar {
