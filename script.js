@@ -630,6 +630,33 @@
     onScroll();
   }
 
+  /* ---------- transparent header over hero ---------- */
+  (function () {
+    var hdr = document.querySelector('.site-header');
+    var hero = document.querySelector('.hero');
+    if (!hdr || !hero) return;
+    var threshold = 0;
+    function measure() {
+      var hh = hdr.offsetHeight;
+      hero.style.marginTop = (-hh) + 'px';
+      threshold = hero.offsetHeight - hh - 20;
+    }
+    function update() {
+      hdr.classList.toggle('is-scrolled', window.scrollY > threshold);
+    }
+    var ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(function () { update(); ticking = false; });
+        ticking = true;
+      }
+    }
+    measure();
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function () { measure(); update(); });
+  })();
+
   /* ---------- prefill direction from CTA ---------- */
   var directionSelect = $('f-direction');
   document.querySelectorAll('[data-prefill]').forEach(function (btn) {
