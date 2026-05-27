@@ -29,42 +29,19 @@ window.CH17_DATA = (function () {
       ctaAction: 'scroll-to-form'
     },
     {
-      id: 'promo-direct',
-      active: true,
-      hot: false,
-      marquee: 'Промокод по запросу в Direct',
-      tag: 'Промокод',
-      title: 'Промокод по запросу в Direct',
-      emphasis: null,
-      description: 'Напишите нам в Instagram Direct — пришлём актуальный промокод на ближайшее занятие.',
-      counter: null,
-      meta: 'В любое время',
-      status: 'Активно',
-      ctaText: 'Получить промокод',
-      ctaAction: 'open-direct'
-    },
-    {
       id: 'ballet-intensive-summer',
       active: true,
       hot: true,
-      marquee: 'Балетный интенсив 25 500 ₽ · первым 10',
+      marquee: 'Балетный интенсив · старт 1 июня',
       tag: 'До 30 июня',
-      title: 'Балетный интенсив 25 500 ₽ вместо 30 000',
-      emphasis: '25 500 ₽',
-      description: '20 занятий по 2 часа в мини-группе 3–6 человек. Полный июньский курс по цене для первых десяти.',
-      counter: { current: 6, total: 10, min: 1, label: 'мест осталось из 10' },
+      title: 'Балетный интенсив — 30 000 ₽',
+      emphasis: '30 000 ₽',
+      description: '20 занятий по 2 часа в мини-группе 3–6 человек. Полный июньский курс.',
+      counter: null,
       meta: 'Старт 1 июня',
       status: 'Идёт набор',
       ctaText: 'Подробнее',
       ctaAction: 'scroll-to-prices'
-    },
-    {
-      id: 'start-june',
-      active: true,
-      hot: false,
-      marquee: 'Старт 1 июня · осталось {N} мест',
-      counterRef: 'ballet-intensive-summer'
-      /* без title → только в бегущей строке */
     }
   ];
 
@@ -168,7 +145,6 @@ window.CH17_DATA = (function () {
       description: 'Сезонный продукт. 1–30 июня, 5 дней в неделю, 20 занятий по 2 часа. Мини-группы 3–6 человек, с 7 лет.',
       formats: [
         { name: 'Полный курс', price: 30000, isTbd: false },
-        { name: 'Первым 10', price: 25500, isTbd: false },
         { name: 'Пробное', price: 1000, isTbd: false }
       ]
     }
