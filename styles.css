@@ -219,7 +219,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-text { max-width: 900px; text-align: center; }
 .hero-title {
   font-family: var(--serif); font-weight: 300;
-  font-size: clamp(56px, 8.8vw, 168px); line-height: .95; letter-spacing: .01em;
+  font-size: clamp(64px, 11vw, 220px); line-height: .95; letter-spacing: .01em;
   margin: 0 0 .18em; color: #c9a35b;
   white-space: nowrap;
   font-feature-settings: "lnum";
@@ -230,7 +230,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-title .ltr { display: inline-block; }
 .hero-slogan {
   font-family: var(--serif); font-style: italic; font-weight: 300;
-  font-size: clamp(19px, 2.6vw, 30px); color: rgba(255,255,255,0.9); margin: 0;
+  font-size: clamp(26px, 3.5vw, 41px); color: rgba(255,255,255,0.9); margin: 0;
   text-shadow: 0 2px 24px rgba(0,0,0,0.45);
 }
 
