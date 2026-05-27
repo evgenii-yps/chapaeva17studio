@@ -52,14 +52,16 @@
   }
 
   /* ---------- hero letter animation ---------- */
+  /* Each color group (.hero-title-word, .hero-title-num) keeps its own
+     color; letters are wrapped per-group so they inherit it. */
   var title = document.querySelector('[data-letters]');
   if (title) {
-    var text = title.textContent.trim();
-    title.textContent = '';
+    var groups = title.querySelectorAll(':scope > span');
     var i = 0;
-    text.split(' ').forEach(function (word, w, arr) {
-      var wordSpan = el('span', 'word');
-      wordSpan.style.whiteSpace = 'nowrap';
+    groups.forEach(function (group) {
+      var word = group.textContent.trim();
+      group.textContent = '';
+      group.style.whiteSpace = 'nowrap';
       word.split('').forEach(function (ch) {
         var span = el('span', 'ltr');
         span.textContent = ch;
@@ -69,11 +71,10 @@
           span.style.transition = 'opacity .6s ease, transform .6s ease';
           span.style.transitionDelay = (i * 0.09) + 's';
         }
-        wordSpan.appendChild(span);
+        group.appendChild(span);
         i++;
       });
-      title.appendChild(wordSpan);
-      if (w < arr.length - 1) { title.appendChild(document.createTextNode(' ')); i++; }
+      i++; // stagger across the space between groups
     });
     if (!reduceMotion) {
       requestAnimationFrame(function () {
@@ -86,6 +87,55 @@
       });
     }
   }
+
+  /* ---------- hero slider ---------- */
+  (function () {
+    var slider = document.querySelector('.hero-slider');
+    if (!slider) return;
+    var slides = Array.prototype.slice.call(slider.querySelectorAll('.hero-slide'));
+    var dots = Array.prototype.slice.call(slider.querySelectorAll('.hero-dot'));
+    if (slides.length < 2) return;
+
+    var INTERVAL = 5000;
+    var current = 0;
+    var timer = null;
+
+    function show(next) {
+      if (next === current) return;
+      slides[current].classList.remove('is-active');
+      dots[current].classList.remove('is-active');
+      dots[current].removeAttribute('aria-current');
+      current = next;
+      slides[current].classList.add('is-active');
+      dots[current].classList.add('is-active');
+      dots[current].setAttribute('aria-current', 'true');
+    }
+
+    function advance() { show((current + 1) % slides.length); }
+
+    function start() {
+      if (reduceMotion || timer) return;
+      timer = setInterval(advance, INTERVAL);
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function restart() { stop(); start(); }
+
+    dots.forEach(function (dot, idx) {
+      dot.addEventListener('click', function () {
+        show(idx);
+        restart();
+      });
+    });
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') stop();
+      else start();
+    });
+
+    start();
+  })();
 
   /* ============================================================
      ПРОМО-СЧЁТЧИКИ (localStorage)
