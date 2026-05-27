@@ -124,12 +124,15 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .site-header {
   position: sticky; top: 0; z-index: 100;
   background: transparent;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
-  transition: background-color 300ms ease, border-color 300ms ease, box-shadow 300ms ease, backdrop-filter 300ms ease;
+  transition: border-color 300ms ease, box-shadow 300ms ease;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header { background: rgba(240, 234, 224, 0.85); }
 }
 .site-header.is-scrolled {
-  background: rgba(240, 234, 224, 0.86);
-  backdrop-filter: blur(10px);
   border-bottom-color: var(--line);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 }
@@ -152,11 +155,10 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .nav-menu > li > a:not(.btn) {
   position: relative;
   font-family: var(--serif); text-transform: uppercase; letter-spacing: .14em;
-  font-size: 14px; color: #fff; font-weight: 500;
+  font-size: 14px; color: var(--ink-soft); font-weight: 500;
   padding-bottom: 4px;
   transition: color 300ms ease;
 }
-.site-header.is-scrolled .nav-menu > li > a:not(.btn) { color: var(--ink-soft); }
 .nav-menu > li > a:not(.btn)::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
   background: var(--gold); transform: scaleX(0); transform-origin: center;
@@ -186,8 +188,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 
 .nav-toggle { display: none; background: none; border: 0; width: 44px; height: 44px; padding: 10px; }
-.nav-toggle span { display: block; height: 1.5px; background: #fff; margin: 5px 0; transition: transform .3s ease, opacity .3s ease, background .3s ease; }
-.site-header.is-scrolled .nav-toggle span { background: var(--ink); }
+.nav-toggle span { display: block; height: 1.5px; background: var(--ink); margin: 5px 0; transition: transform .3s ease, opacity .3s ease, background .3s ease; }
 .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
@@ -711,7 +712,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
     transition: transform .28s ease, opacity .28s ease;
   }
   .nav-menu.is-open { transform: none; opacity: 1; pointer-events: auto; }
-  .site-header:not(.is-scrolled) .nav-menu > li > a:not(.btn) { color: var(--ink-soft); }
   .nav-menu > li { padding: 6px 0; }
   .nav-menu > li > a:not(.btn) { display: block; padding: 8px 0; font-size: 16px; }
   .nav-menu > li > a:not(.btn)::after { display: none; }
