@@ -544,8 +544,11 @@
       requestAnimationFrame(function () {
         modal.classList.add('is-open');
         if (closeBtn) closeBtn.focus({ preventScroll: true });
-        // сброс на первый слайд при каждом открытии
+        // сброс на первый слайд при каждом открытии (без плавной анимации)
+        var prevBehavior = listEl.style.scrollBehavior;
+        listEl.style.scrollBehavior = 'auto';
         listEl.scrollTop = 0;
+        listEl.style.scrollBehavior = prevBehavior;
         if (counterEl) counterEl.textContent = '1 / ' + total;
         setupCounter();
       });
