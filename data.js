@@ -281,6 +281,20 @@ window.CH17_DATA = (function () {
     }
   ];
 
+  /* --------------------------------------------------------
+     ФОТОАЛЬБОМ СТУДИИ (модалка «Студия» в секции «Пространство»)
+  -------------------------------------------------------- */
+  var studioPhotos = [
+    { id: 'lounge-armchair',  image: '/public/images/studio/studio-lounge-armchair.jpg',  imageWebp: '/public/images/studio/studio-lounge-armchair.webp',  alt: 'Зона отдыха с креслом' },
+    { id: 'lounge-shelf',     image: '/public/images/studio/studio-lounge-shelf.jpg',     imageWebp: '/public/images/studio/studio-lounge-shelf.webp',     alt: 'Шкаф и сертификат Legacy' },
+    { id: 'yoga-zone',        image: '/public/images/studio/studio-yoga-zone.jpg',        imageWebp: '/public/images/studio/studio-yoga-zone.webp',        alt: 'Йога-зона с растениями и чашами' },
+    { id: 'reformers-map',    image: '/public/images/studio/studio-reformers-map.jpg',    imageWebp: '/public/images/studio/studio-reformers-map.webp',    alt: 'Реформеры на фоне карты мира' },
+    { id: 'wall-stations',    image: '/public/images/studio/studio-wall-stations.jpg',    imageWebp: '/public/images/studio/studio-wall-stations.webp',    alt: 'Стена с пружинными станциями' },
+    { id: 'tower-station',    image: '/public/images/studio/studio-tower-station.jpg',    imageWebp: '/public/images/studio/studio-tower-station.webp',    alt: 'Башня с пружинной стенкой' },
+    { id: 'cadillac-front',   image: '/public/images/studio/studio-cadillac-front.jpg',   imageWebp: '/public/images/studio/studio-cadillac-front.webp',   alt: 'Кадиллак фронтально' },
+    { id: 'cadillac-springs', image: '/public/images/studio/studio-cadillac-springs.jpg', imageWebp: '/public/images/studio/studio-cadillac-springs.webp', alt: 'Пружины и аксессуары кадиллака' }
+  ];
+
   return {
     promos: promos,
     directions: directions,
@@ -288,6 +302,7 @@ window.CH17_DATA = (function () {
     troupe: troupe,
     faq: faq,
     equipment: equipment,
+    studioPhotos: studioPhotos,
     directOpenUrl: 'https://instagram.com/chapaeva17_studio'
   };
 })();

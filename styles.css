@@ -965,3 +965,206 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 @media (prefers-reduced-motion: reduce) {
   .equipment-list { scroll-behavior: auto; }
 }
+
+/* ============================================================
+   SPACE — две плитки рядом
+   ============================================================ */
+.space-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2.5vw, 32px);
+  margin: 48px auto 0;
+  max-width: 1100px;
+}
+.space-tile {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 4 / 3;
+}
+.space-tile-picture { display: block; width: 100%; height: 100%; }
+.space-tile-picture img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.space-tile-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: flex-start;
+  padding: clamp(16px, 3vw, 32px);
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.space-tile-label {
+  font-family: var(--serif);
+  font-size: clamp(18px, 2vw, 26px);
+  color: #fff;
+  letter-spacing: .02em;
+}
+@media (hover: hover) {
+  .space-tile:hover .space-tile-picture img { transform: scale(1.03); }
+  .space-tile:hover .space-tile-overlay { opacity: 1; }
+}
+.space-tile:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+@media (hover: none) {
+  .space-tile-overlay { opacity: 1; }
+}
+@media (max-width: 760px) {
+  .space-tiles { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   STUDIO MODAL — gallery + lightbox
+   ============================================================ */
+.studio-modal[hidden] { display: none; }
+.studio-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: clamp(16px, 4vw, 48px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.studio-modal.is-open { opacity: 1; }
+.studio-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(20, 20, 18, 0.78);
+}
+.studio-modal-dialog {
+  position: relative; z-index: 1;
+  width: min(1100px, 100%);
+  height: min(720px, 88vh);
+  background: var(--cream);
+  border-radius: var(--radius);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .45);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transform: scale(.96);
+  transition: transform .22s ease;
+}
+.studio-modal.is-open .studio-modal-dialog { transform: scale(1); }
+.studio-modal-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px clamp(20px, 4vw, 32px);
+  flex-shrink: 0;
+}
+.studio-modal-eyebrow { margin: 0; color: var(--ink-soft); }
+.studio-modal-close {
+  width: 40px; height: 40px;
+  border: 0; background: transparent;
+  font-size: 28px; line-height: 1; color: var(--ink-soft);
+  cursor: pointer;
+}
+.studio-modal-close:hover { color: var(--ink); }
+
+.studio-gallery {
+  list-style: none; margin: 0;
+  padding: 0 clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.4vw, 16px);
+  overflow-y: auto;
+  flex: 1;
+}
+.studio-thumb { margin: 0; padding: 0; }
+.studio-thumb-btn {
+  display: block;
+  width: 100%; padding: 0; border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+.studio-thumb-btn picture, .studio-thumb-btn img {
+  display: block; width: 100%; height: 100%;
+}
+.studio-thumb-btn img {
+  object-fit: cover;
+  transition: transform .4s ease, opacity .3s ease;
+}
+@media (hover: hover) {
+  .studio-thumb-btn:hover img { transform: scale(1.04); }
+}
+.studio-thumb-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .studio-gallery { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- lightbox внутри studio-modal ---- */
+.studio-lightbox[hidden] { display: none; }
+.studio-lightbox {
+  position: fixed; inset: 0; z-index: 220;
+  background: rgba(10, 10, 8, 0.94);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.studio-lightbox.is-open { opacity: 1; }
+.studio-lightbox-stage {
+  width: 100%; max-width: min(1400px, 92vw);
+  max-height: 86vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 64px;
+}
+.studio-lightbox-img {
+  max-width: 100%; max-height: 86vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+.studio-lightbox-prev, .studio-lightbox-next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 56px; height: 56px;
+  border: 0; background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 28px; line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s ease;
+}
+.studio-lightbox-prev { left: 20px; }
+.studio-lightbox-next { right: 20px; }
+.studio-lightbox-prev:hover, .studio-lightbox-next:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.studio-lightbox-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 44px; height: 44px;
+  border: 0; background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 28px; line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.studio-lightbox-close:hover { background: rgba(255, 255, 255, 0.16); }
+.studio-lightbox-counter {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--serif);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  letter-spacing: .12em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .studio-lightbox-stage { padding: 0 16px; }
+  .studio-lightbox-prev, .studio-lightbox-next {
+    width: 44px; height: 44px; font-size: 22px;
+  }
+  .studio-lightbox-prev { left: 8px; }
+  .studio-lightbox-next { right: 8px; }
+}

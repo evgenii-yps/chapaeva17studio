@@ -223,16 +223,28 @@
           <p class="eyebrow">Пространство</p>
           <h2 class="h2" id="space-title">98 м² света, дуба и тишины</h2>
           <p class="lead space-sub">Новый ЖК на Чапаева 17. Потолки 4,2 метра, окна в зелёный двор. Отдельный кабинет восстановления для работы со специалистом после тренировки.</p>
+          <p class="lead space-sub">Основной зал с реформерами и кадиллаками, отдельная зона для пилатеса на матах и йоги, кабинет восстановления, лаунж с кофе и сертификатом Legacy. Внутри — рабочая тишина, свет из двора, никакой музыки на соседнем тренажёре.</p>
         </div>
-        <button class="space-hero" type="button" aria-haspopup="dialog" aria-controls="equipment-modal">
-          <picture class="space-hero-picture">
-            <source srcset="/public/images/studio/studio-towers-wall.webp" type="image/webp">
-            <img src="/public/images/studio/studio-towers-wall.jpg" alt="Стенка с пружинами и две зеркальные башни — оборудование Legacy" loading="lazy" decoding="async">
-          </picture>
-          <span class="space-hero-overlay">
-            <span class="space-hero-label">Оборудование Legacy →</span>
-          </span>
-        </button>
+        <div class="space-tiles">
+          <button class="space-tile" type="button" aria-haspopup="dialog" aria-controls="studio-modal">
+            <picture class="space-tile-picture">
+              <source srcset="/public/images/studio/studio-lounge-shelf.webp" type="image/webp">
+              <img src="/public/images/studio/studio-lounge-shelf.jpg" alt="Зона отдыха студии — кресло, шкаф, сертификат Legacy" loading="lazy" decoding="async">
+            </picture>
+            <span class="space-tile-overlay">
+              <span class="space-tile-label">Студия →</span>
+            </span>
+          </button>
+          <button class="space-tile" type="button" aria-haspopup="dialog" aria-controls="equipment-modal">
+            <picture class="space-tile-picture">
+              <source srcset="/public/images/studio/studio-tower-station.webp" type="image/webp">
+              <img src="/public/images/studio/studio-tower-station.jpg" alt="Башня с пружинной стенкой — оборудование Legacy" loading="lazy" decoding="async">
+            </picture>
+            <span class="space-tile-overlay">
+              <span class="space-tile-label">Оборудование Legacy →</span>
+            </span>
+          </button>
+        </div>
         <p class="space-note"><span class="dot dot--pulse" aria-hidden="true"></span> Здесь занимаются артисты ведущих петербургских театров. Студия открывалась как площадка для труппы Мариинского — это не реклама, а способ организации работы. Те же стандарты получают все клиенты.</p>
       </div>
     </section>
@@ -466,6 +478,27 @@
         </div>
       </div>
       <ul class="equipment-list" id="equipment-list" tabindex="0"></ul>
+    </div>
+  </div>
+
+  <!-- Studio modal -->
+  <div class="studio-modal" id="studio-modal" hidden>
+    <div class="studio-modal-backdrop" data-close></div>
+    <div class="studio-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="studio-modal-title">
+      <div class="studio-modal-topbar">
+        <p class="eyebrow studio-modal-eyebrow" id="studio-modal-title">Студия</p>
+        <button class="studio-modal-close" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <ul class="studio-gallery" id="studio-gallery"></ul>
+    </div>
+    <div class="studio-lightbox" id="studio-lightbox" hidden aria-hidden="true">
+      <button class="studio-lightbox-prev" type="button" aria-label="Предыдущее фото">‹</button>
+      <div class="studio-lightbox-stage">
+        <img class="studio-lightbox-img" id="studio-lightbox-img" src="" alt="">
+      </div>
+      <button class="studio-lightbox-next" type="button" aria-label="Следующее фото">›</button>
+      <button class="studio-lightbox-close" type="button" aria-label="Закрыть фото">×</button>
+      <p class="studio-lightbox-counter" id="studio-lightbox-counter" aria-live="polite"></p>
     </div>
   </div>
 
