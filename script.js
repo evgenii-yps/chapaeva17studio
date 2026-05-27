@@ -488,26 +488,47 @@
     var items = (DATA.equipment || []);
 
     // render list
-    listEl.innerHTML = items.map(function (it) {
+    listEl.innerHTML = items.map(function (it, idx) {
       var media = it.image
-        ? '<picture class="equipment-card-pic">' +
+        ? '<picture class="equipment-slide-pic">' +
             (it.imageWebp ? '<source srcset="' + it.imageWebp + '" type="image/webp">' : '') +
             '<img src="' + it.image + '" alt="' + esc(it.name) + '" loading="lazy" decoding="async">' +
           '</picture>'
-        : '<div class="equipment-card-soon" aria-hidden="true"><span>СКОРО</span></div>';
+        : '<div class="equipment-slide-soon" aria-hidden="true"><span>СКОРО</span></div>';
       var count = it.count > 1
-        ? '<span class="equipment-card-count">×' + it.count + '</span>'
+        ? '<span class="equipment-slide-count">×' + it.count + '</span>'
         : '';
       return (
-        '<li class="equipment-card">' +
-          media +
-          '<div class="equipment-card-body">' +
-            '<h4 class="equipment-card-name">' + esc(it.name) + count + '</h4>' +
-            '<p class="equipment-card-desc">' + esc(it.description || '') + '</p>' +
+        '<li class="equipment-slide" data-index="' + (idx + 1) + '">' +
+          '<div class="equipment-slide-media">' + media + '</div>' +
+          '<div class="equipment-slide-body">' +
+            '<h4 class="equipment-slide-name">' + esc(it.name) + count + '</h4>' +
+            '<p class="equipment-slide-desc">' + esc(it.description || '') + '</p>' +
           '</div>' +
         '</li>'
       );
     }).join('');
+
+    /* counter via IntersectionObserver */
+    var counterEl = $('equipment-modal-counter');
+    var total = items.length;
+    if (counterEl) counterEl.textContent = '1 / ' + total;
+
+    var io = null;
+    function setupCounter() {
+      if (io) io.disconnect();
+      var slides = listEl.querySelectorAll('.equipment-slide');
+      if (!slides.length || !('IntersectionObserver' in window)) return;
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            var idx = entry.target.getAttribute('data-index');
+            if (counterEl && idx) counterEl.textContent = idx + ' / ' + total;
+          }
+        });
+      }, { root: listEl, threshold: [0.5, 0.75] });
+      slides.forEach(function (s) { io.observe(s); });
+    }
 
     function focusable() {
       if (!modal) return [];
@@ -523,6 +544,10 @@
       requestAnimationFrame(function () {
         modal.classList.add('is-open');
         if (closeBtn) closeBtn.focus({ preventScroll: true });
+        // сброс на первый слайд при каждом открытии
+        listEl.scrollTop = 0;
+        if (counterEl) counterEl.textContent = '1 / ' + total;
+        setupCounter();
       });
       document.body.style.overflow = 'hidden';
     }
@@ -533,6 +558,7 @@
       var dur = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
       setTimeout(function () {
         modal.hidden = true;
+        if (io) { io.disconnect(); io = null; }
         if (opener && typeof opener.focus === 'function') {
           opener.focus({ preventScroll: true });
         }

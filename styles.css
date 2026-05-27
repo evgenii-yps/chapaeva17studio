@@ -811,106 +811,151 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 
 /* ============================================================
-   EQUIPMENT MODAL
+   EQUIPMENT MODAL — fullscreen snap carousel
    ============================================================ */
 .equipment-modal[hidden] { display: none; }
 .equipment-modal {
   position: fixed; inset: 0; z-index: 200;
-  display: flex; align-items: center; justify-content: center;
-  padding: clamp(16px, 3vw, 40px);
   opacity: 0;
-  transition: opacity .22s ease;
+  transition: opacity .25s ease;
 }
 .equipment-modal.is-open { opacity: 1; }
 .equipment-modal-backdrop {
   position: absolute; inset: 0;
-  background: rgba(20, 20, 18, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(20, 20, 18, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .equipment-modal-dialog {
   position: relative;
-  width: 100%; max-width: 760px;
-  max-height: 88vh;
-  overflow-y: auto;
+  width: 100vw; height: 100vh; height: 100svh;
   background: var(--cream);
-  border-radius: 6px;
-  padding: clamp(28px, 4vw, 48px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
-  transform: translateY(12px);
-  transition: transform .28s ease;
+  overflow: hidden;
 }
-.equipment-modal.is-open .equipment-modal-dialog { transform: translateY(0); }
+
+/* topbar — eyebrow слева, счётчик + крестик справа */
+.equipment-modal-topbar {
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 3;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px clamp(20px, 4vw, 48px);
+  pointer-events: none;
+}
+.equipment-modal-eyebrow {
+  margin: 0;
+  pointer-events: auto;
+  color: var(--ink-soft);
+}
+.equipment-modal-controls {
+  display: flex; align-items: center; gap: 16px;
+  pointer-events: auto;
+}
+.equipment-modal-counter {
+  font-family: var(--serif);
+  font-size: 14px;
+  letter-spacing: .12em;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
 .equipment-modal-close {
-  position: absolute; top: 14px; right: 16px;
   width: 40px; height: 40px;
   border: 0; background: transparent;
   font-size: 28px; line-height: 1; color: var(--ink-soft);
   cursor: pointer;
 }
 .equipment-modal-close:hover { color: var(--ink); }
-.equipment-modal-head { margin-bottom: 28px; }
-.equipment-modal-title {
-  font-family: var(--serif); font-weight: 300;
-  font-size: clamp(26px, 3.4vw, 36px);
-  margin: 8px 0 12px; color: var(--ink);
-}
-.equipment-modal-sub {
-  font-size: 15px; color: var(--ink-soft); line-height: 1.55;
-  margin: 0;
-}
+
+/* snap-список */
 .equipment-list {
-  display: flex; flex-direction: column;
-  gap: 22px;
-  margin: 0; padding: 0; list-style: none;
+  list-style: none; margin: 0; padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  outline: none;
+  -webkit-overflow-scrolling: touch;
 }
-.equipment-card {
+.equipment-list::-webkit-scrollbar { width: 0; height: 0; }
+
+/* слайд */
+.equipment-slide {
+  position: relative;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
   display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 20px;
-  align-items: start;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--line);
+  grid-template-columns: 60% 40%;
+  align-items: center;
 }
-.equipment-card:last-child { border-bottom: 0; padding-bottom: 0; }
-.equipment-card-pic {
-  display: block;
-  width: 180px; aspect-ratio: 4 / 3;
-  border-radius: 4px; overflow: hidden;
+.equipment-slide-media {
+  position: relative;
+  width: 100%; height: 100%;
+  overflow: hidden;
   background: #d9d2c4;
 }
-.equipment-card-pic img {
-  width: 100%; height: 100%; object-fit: cover;
+.equipment-slide-pic {
+  display: block; width: 100%; height: 100%;
 }
-.equipment-card-soon {
+.equipment-slide-pic img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.equipment-slide-soon {
   display: flex; align-items: center; justify-content: center;
-  width: 180px; aspect-ratio: 4 / 3;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.04);
   border: 1.5px dashed var(--line);
-  border-radius: 4px;
-  background: rgba(0,0,0,0.02);
 }
-.equipment-card-soon span {
+.equipment-slide-soon span {
   font-family: var(--serif);
-  letter-spacing: .18em;
-  font-size: 13px;
+  letter-spacing: .2em;
+  font-size: 18px;
   color: var(--ink-soft);
   text-transform: uppercase;
 }
-.equipment-card-body { padding-top: 4px; }
-.equipment-card-name {
-  font-family: var(--serif); font-weight: 400;
-  font-size: 22px; margin: 0 0 8px; color: var(--ink);
-  display: flex; align-items: baseline; gap: 10px;
+.equipment-slide-body {
+  padding: clamp(40px, 6vw, 80px) clamp(28px, 5vw, 64px);
+  max-width: 520px;
 }
-.equipment-card-count {
-  font-family: var(--serif); font-size: 16px; color: var(--gold);
+.equipment-slide-name {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(32px, 4.5vw, 52px);
+  margin: 0 0 20px;
+  color: var(--ink);
+  line-height: 1.05;
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+}
+.equipment-slide-count {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.2vw, 26px);
+  color: var(--gold);
   font-weight: 500;
 }
-.equipment-card-desc {
-  margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft);
+.equipment-slide-desc {
+  margin: 0;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
-@media (max-width: 600px) {
-  .equipment-card { grid-template-columns: 1fr; }
-  .equipment-card-pic, .equipment-card-soon { width: 100%; }
+/* мобильный: столбик, фото ~50% / текст ~50% */
+@media (max-width: 760px) {
+  .equipment-slide {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50% 50%;
+  }
+  .equipment-slide-body {
+    padding: clamp(24px, 5vw, 32px);
+    max-width: none;
+    align-self: start;
+    overflow-y: auto;
+  }
+  .equipment-modal-topbar {
+    padding: 14px 20px;
+  }
+}
+
+/* prefers-reduced-motion: убираем плавный snap-scroll */
+@media (prefers-reduced-motion: reduce) {
+  .equipment-list { scroll-behavior: auto; }
 }

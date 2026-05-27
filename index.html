@@ -458,13 +458,14 @@
   <div class="equipment-modal" id="equipment-modal" hidden>
     <div class="equipment-modal-backdrop" data-close></div>
     <div class="equipment-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="equipment-modal-title">
-      <button class="equipment-modal-close" type="button" aria-label="Закрыть">×</button>
-      <div class="equipment-modal-head">
-        <p class="eyebrow">Оборудование</p>
-        <h3 class="equipment-modal-title" id="equipment-modal-title">Полный комплект Legacy Pilates</h3>
-        <p class="equipment-modal-sub">Семь типов тренажёров. Линейка собирается под живую студийную работу — от реабилитации до балета.</p>
+      <div class="equipment-modal-topbar">
+        <p class="eyebrow equipment-modal-eyebrow" id="equipment-modal-title">Оборудование Legacy</p>
+        <div class="equipment-modal-controls">
+          <span class="equipment-modal-counter" id="equipment-modal-counter" aria-live="polite">1 / 7</span>
+          <button class="equipment-modal-close" type="button" aria-label="Закрыть">×</button>
+        </div>
       </div>
-      <ul class="equipment-list" id="equipment-list"></ul>
+      <ul class="equipment-list" id="equipment-list" tabindex="0"></ul>
     </div>
   </div>
 
