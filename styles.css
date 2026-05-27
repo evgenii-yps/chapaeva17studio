@@ -759,3 +759,158 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 @media (max-width: 760px) and (min-width: 561px) {
   .team-grid { grid-template-columns: repeat(2, 1fr); max-width: none; }
 }
+
+/* ============================================================
+   SPACE — hero photo with overlay (replaces 5-photo grid)
+   ============================================================ */
+.space-hero {
+  display: block;
+  width: 100%;
+  max-width: 1100px;
+  margin: 48px auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 3 / 2;
+}
+.space-hero-picture { display: block; width: 100%; height: 100%; }
+.space-hero-picture img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.space-hero-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: flex-start;
+  padding: clamp(20px, 4vw, 40px);
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.space-hero-label {
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.4vw, 32px);
+  color: #fff;
+  letter-spacing: .02em;
+}
+@media (hover: hover) {
+  .space-hero:hover .space-hero-picture img { transform: scale(1.03); }
+  .space-hero:hover .space-hero-overlay { opacity: 1; }
+}
+.space-hero:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+/* На мобильных hover недоступен — оверлей виден всегда */
+@media (hover: none) {
+  .space-hero-overlay { opacity: 1; }
+}
+
+/* ============================================================
+   EQUIPMENT MODAL
+   ============================================================ */
+.equipment-modal[hidden] { display: none; }
+.equipment-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(16px, 3vw, 40px);
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+.equipment-modal.is-open { opacity: 1; }
+.equipment-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(20, 20, 18, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.equipment-modal-dialog {
+  position: relative;
+  width: 100%; max-width: 760px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--cream);
+  border-radius: 6px;
+  padding: clamp(28px, 4vw, 48px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+  transform: translateY(12px);
+  transition: transform .28s ease;
+}
+.equipment-modal.is-open .equipment-modal-dialog { transform: translateY(0); }
+.equipment-modal-close {
+  position: absolute; top: 14px; right: 16px;
+  width: 40px; height: 40px;
+  border: 0; background: transparent;
+  font-size: 28px; line-height: 1; color: var(--ink-soft);
+  cursor: pointer;
+}
+.equipment-modal-close:hover { color: var(--ink); }
+.equipment-modal-head { margin-bottom: 28px; }
+.equipment-modal-title {
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(26px, 3.4vw, 36px);
+  margin: 8px 0 12px; color: var(--ink);
+}
+.equipment-modal-sub {
+  font-size: 15px; color: var(--ink-soft); line-height: 1.55;
+  margin: 0;
+}
+.equipment-list {
+  display: flex; flex-direction: column;
+  gap: 22px;
+  margin: 0; padding: 0; list-style: none;
+}
+.equipment-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.equipment-card:last-child { border-bottom: 0; padding-bottom: 0; }
+.equipment-card-pic {
+  display: block;
+  width: 180px; aspect-ratio: 4 / 3;
+  border-radius: 4px; overflow: hidden;
+  background: #d9d2c4;
+}
+.equipment-card-pic img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.equipment-card-soon {
+  display: flex; align-items: center; justify-content: center;
+  width: 180px; aspect-ratio: 4 / 3;
+  border: 1.5px dashed var(--line);
+  border-radius: 4px;
+  background: rgba(0,0,0,0.02);
+}
+.equipment-card-soon span {
+  font-family: var(--serif);
+  letter-spacing: .18em;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.equipment-card-body { padding-top: 4px; }
+.equipment-card-name {
+  font-family: var(--serif); font-weight: 400;
+  font-size: 22px; margin: 0 0 8px; color: var(--ink);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.equipment-card-count {
+  font-family: var(--serif); font-size: 16px; color: var(--gold);
+  font-weight: 500;
+}
+.equipment-card-desc {
+  margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-soft);
+}
+
+@media (max-width: 600px) {
+  .equipment-card { grid-template-columns: 1fr; }
+  .equipment-card-pic, .equipment-card-soon { width: 100%; }
+}

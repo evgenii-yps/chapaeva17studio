@@ -224,33 +224,15 @@
           <h2 class="h2" id="space-title">98 м² света, дуба и тишины</h2>
           <p class="lead space-sub">Новый ЖК на Чапаева 17. Потолки 4,2 метра, окна в зелёный двор. Отдельный кабинет восстановления для работы со специалистом после тренировки.</p>
         </div>
-        <ul class="space-grid" id="space-grid" aria-label="Фотографии студии">
-          <li class="space-item space-item--big">
-            <button class="gallery-item" type="button" data-full="/public/images/studio/studio-reformers-window.jpg">
-              <picture><source srcset="/public/images/studio/studio-reformers-window.webp" type="image/webp"><img src="/public/images/studio/studio-reformers-window.jpg" alt="Зал с реформерами у окна" loading="lazy" decoding="async"></picture>
-            </button>
-          </li>
-          <li class="space-item">
-            <button class="gallery-item" type="button" data-full="/public/images/studio/studio-cadillac-window.jpg">
-              <picture><source srcset="/public/images/studio/studio-cadillac-window.webp" type="image/webp"><img src="/public/images/studio/studio-cadillac-window.jpg" alt="Окно во двор и кадиллак" loading="lazy" decoding="async"></picture>
-            </button>
-          </li>
-          <li class="space-item">
-            <button class="gallery-item" type="button" data-full="/public/images/studio/studio-barrel-legacy.jpg">
-              <picture><source srcset="/public/images/studio/studio-barrel-legacy.webp" type="image/webp"><img src="/public/images/studio/studio-barrel-legacy.jpg" alt="Бочка и стулья Legacy" loading="lazy" decoding="async"></picture>
-            </button>
-          </li>
-          <li class="space-item">
-            <button class="gallery-item" type="button" data-full="/public/images/studio/studio-massage-room-1.jpg">
-              <picture><source srcset="/public/images/studio/studio-massage-room-1.webp" type="image/webp"><img src="/public/images/studio/studio-massage-room-1.jpg" alt="Кабинет восстановления" loading="lazy" decoding="async"></picture>
-            </button>
-          </li>
-          <li class="space-item">
-            <button class="gallery-item" type="button" data-full="/public/images/studio/studio-entrance-merch.jpg">
-              <picture><source srcset="/public/images/studio/studio-entrance-merch.webp" type="image/webp"><img src="/public/images/studio/studio-entrance-merch.jpg" alt="Вход и общий план студии" loading="lazy" decoding="async"></picture>
-            </button>
-          </li>
-        </ul>
+        <button class="space-hero" type="button" aria-haspopup="dialog" aria-controls="equipment-modal">
+          <picture class="space-hero-picture">
+            <source srcset="/public/images/studio/studio-towers-wall.webp" type="image/webp">
+            <img src="/public/images/studio/studio-towers-wall.jpg" alt="Стенка с пружинами и две зеркальные башни — оборудование Legacy" loading="lazy" decoding="async">
+          </picture>
+          <span class="space-hero-overlay">
+            <span class="space-hero-label">Оборудование Legacy →</span>
+          </span>
+        </button>
         <p class="space-note"><span class="dot dot--pulse" aria-hidden="true"></span> Здесь занимаются артисты ведущих петербургских театров. Студия открывалась как площадка для труппы Мариинского — это не реклама, а способ организации работы. Те же стандарты получают все клиенты.</p>
       </div>
     </section>
@@ -469,6 +451,20 @@
         <p class="team-modal-bio" id="team-modal-bio"></p>
         <button class="btn btn-primary team-modal-cta" type="button" id="team-modal-cta">Записаться к тренеру</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Equipment modal -->
+  <div class="equipment-modal" id="equipment-modal" hidden>
+    <div class="equipment-modal-backdrop" data-close></div>
+    <div class="equipment-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="equipment-modal-title">
+      <button class="equipment-modal-close" type="button" aria-label="Закрыть">×</button>
+      <div class="equipment-modal-head">
+        <p class="eyebrow">Оборудование</p>
+        <h3 class="equipment-modal-title" id="equipment-modal-title">Полный комплект Legacy Pilates</h3>
+        <p class="equipment-modal-sub">Семь типов тренажёров. Линейка собирается под живую студийную работу — от реабилитации до балета.</p>
+      </div>
+      <ul class="equipment-list" id="equipment-list"></ul>
     </div>
   </div>
 

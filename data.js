@@ -218,12 +218,76 @@ window.CH17_DATA = (function () {
     }
   ];
 
+  /* --------------------------------------------------------
+     ОБОРУДОВАНИЕ (модалка в секции «Пространство»)
+     image: null → рендерится плашка «СКОРО»
+  -------------------------------------------------------- */
+  var equipment = [
+    {
+      id: 'reformer',
+      name: 'Реформер',
+      count: 3,
+      image: '/public/images/studio/studio-reformers-window.jpg',
+      imageWebp: '/public/images/studio/studio-reformers-window.webp',
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'cadillac',
+      name: 'Кадиллак',
+      count: 2,
+      image: '/public/images/studio/studio-cadillac-window.jpg',
+      imageWebp: '/public/images/studio/studio-cadillac-window.webp',
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'ladder-barrel',
+      name: 'Ladder Barrel',
+      count: 1,
+      image: '/public/images/studio/studio-barrel-legacy.jpg',
+      imageWebp: '/public/images/studio/studio-barrel-legacy.webp',
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'spine-corrector',
+      name: 'Spine Corrector',
+      count: 1,
+      image: null,
+      imageWebp: null,
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'wunda-chair',
+      name: 'Wunda Chair',
+      count: 1,
+      image: '/public/images/studio/studio-chair-wunda.jpg',
+      imageWebp: '/public/images/studio/studio-chair-wunda.webp',
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'high-chair',
+      name: 'High Chair',
+      count: 1,
+      image: '/public/images/studio/studio-chair-wunda-side.jpg',
+      imageWebp: '/public/images/studio/studio-chair-wunda-side.webp',
+      description: 'Описание скоро.'
+    },
+    {
+      id: 'box',
+      name: 'Reformer Box',
+      count: 1,
+      image: null,
+      imageWebp: null,
+      description: 'Описание скоро.'
+    }
+  ];
+
   return {
     promos: promos,
     directions: directions,
     team: team,
     troupe: troupe,
     faq: faq,
+    equipment: equipment,
     directOpenUrl: 'https://instagram.com/chapaeva17_studio'
   };
 })();

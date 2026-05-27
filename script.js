@@ -476,6 +476,90 @@
     });
   }
 
+  /* ---------- equipment modal ---------- */
+  (function () {
+    var modal = $('equipment-modal');
+    var trigger = document.querySelector('.space-hero');
+    var listEl = $('equipment-list');
+    var closeBtn = modal && modal.querySelector('.equipment-modal-close');
+    if (!modal || !trigger || !listEl) return;
+
+    var opener = null;
+    var items = (DATA.equipment || []);
+
+    // render list
+    listEl.innerHTML = items.map(function (it) {
+      var media = it.image
+        ? '<picture class="equipment-card-pic">' +
+            (it.imageWebp ? '<source srcset="' + it.imageWebp + '" type="image/webp">' : '') +
+            '<img src="' + it.image + '" alt="' + esc(it.name) + '" loading="lazy" decoding="async">' +
+          '</picture>'
+        : '<div class="equipment-card-soon" aria-hidden="true"><span>СКОРО</span></div>';
+      var count = it.count > 1
+        ? '<span class="equipment-card-count">×' + it.count + '</span>'
+        : '';
+      return (
+        '<li class="equipment-card">' +
+          media +
+          '<div class="equipment-card-body">' +
+            '<h4 class="equipment-card-name">' + esc(it.name) + count + '</h4>' +
+            '<p class="equipment-card-desc">' + esc(it.description || '') + '</p>' +
+          '</div>' +
+        '</li>'
+      );
+    }).join('');
+
+    function focusable() {
+      if (!modal) return [];
+      return Array.prototype.slice.call(
+        modal.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])')
+      ).filter(function (el) { return !el.hasAttribute('disabled'); });
+    }
+
+    function open(e) {
+      if (e) e.preventDefault();
+      opener = document.activeElement;
+      modal.hidden = false;
+      requestAnimationFrame(function () {
+        modal.classList.add('is-open');
+        if (closeBtn) closeBtn.focus({ preventScroll: true });
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      var dur = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
+      setTimeout(function () {
+        modal.hidden = true;
+        if (opener && typeof opener.focus === 'function') {
+          opener.focus({ preventScroll: true });
+        }
+      }, dur);
+    }
+
+    trigger.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    modal.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (modal.hidden) return;
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'Tab') {
+        var f = focusable();
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    });
+  })();
+
   /* ============================================================
      АККОРДЕОНЫ (направления + FAQ)
      ============================================================ */
