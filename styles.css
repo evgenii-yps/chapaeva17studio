@@ -722,11 +722,9 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
   .nav-cta { display: none; }
   .header-cta-mobile {
     display: inline-flex;
-    margin-left: auto;
     padding: .55em 1.1em;
     font-size: 13px;
   }
-  .site-nav { margin-left: 8px; }
   .site-header.is-dark .nav-menu { background: var(--charcoal); }
 
   .hero-title { white-space: nowrap; }
