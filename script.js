@@ -848,7 +848,7 @@
 
   /* ---------- reveal on scroll ---------- */
   var revealEls = [].slice.call(document.querySelectorAll(
-    '.section-head, .promo-card, .about-epigraph, .about-text, .legacy-card, ' +
+    '.section-head, .promo-card, .about-epigraph, .about-text, ' +
     '.team-card, .troupe, .acc-item, .space-item, .space-note, .trial-card, ' +
     '.booking-form-col, .booking-info, .contacts-map, .contacts-info'
   ));

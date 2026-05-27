@@ -364,16 +364,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .about-text p:last-child { margin-bottom: 0; }
 
 /* ============================================================
-   LEGACY
-   ============================================================ */
-.legacy { background: var(--cream-warm); }
-.legacy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 36px); }
-.legacy-media { border-radius: var(--radius); overflow: hidden; box-shadow: var(--soft-shadow); margin-bottom: 1.4em; }
-.legacy-media img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
-.legacy-name { font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.4vw, 28px); margin: 0 0 .4em; color: var(--ink); }
-.legacy-desc { margin: 0; color: var(--ink-soft); }
-
-/* ============================================================
    КОМАНДА
    ============================================================ */
 .team { background: var(--cream); }
@@ -692,7 +682,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
    ============================================================ */
 @media (max-width: 1024px) {
   .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .legacy-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
 }
 
 @media (max-width: 860px) {
