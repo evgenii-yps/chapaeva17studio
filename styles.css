@@ -187,9 +187,30 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
    ============================================================ */
 .hero { position: relative; min-height: 100svh; max-height: 920px; display: flex; align-items: center; overflow: hidden; }
 .hero-media { position: absolute; inset: 0 0 0 auto; width: 40%; z-index: 0; }
-.hero-img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- slider --- */
+.hero-slider { position: absolute; inset: 0; }
+.hero-slides { position: absolute; inset: 0; }
+.hero-slide {
+  position: absolute; inset: 0; display: block;
+  opacity: 0; transition: opacity 800ms ease-in-out;
+}
+.hero-slide.is-active { opacity: 1; }
+.hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.hero-slider-dots {
+  position: absolute; left: 0; right: 0; bottom: 20px; z-index: 3;
+  display: flex; justify-content: center; gap: 12px;
+}
+.hero-dot {
+  width: 10px; height: 10px; padding: 0; border-radius: 50%;
+  background: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.9);
+  cursor: pointer; transition: transform .25s ease, background-color .25s ease, opacity .25s ease;
+}
+.hero-dot:hover { transform: scale(1.25); opacity: 1; }
+.hero-dot.is-active { background: var(--gold); border-color: var(--gold); }
+
 .hero-scrim {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: linear-gradient(90deg, var(--cream) 0%, rgba(240,234,224,0) 28%),
               linear-gradient(0deg, rgba(35,36,31,.18), rgba(35,36,31,0) 30%, rgba(35,36,31,.12));
 }
@@ -210,22 +231,16 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-title {
   font-family: var(--serif); font-weight: 300;
   font-size: clamp(56px, 8.8vw, 168px); line-height: .95; letter-spacing: .01em;
-  margin: .12em 0 .18em; color: var(--ink);
+  margin: .12em 0 .18em;
   white-space: nowrap;
 }
+.hero-title-word { color: #c9a35b; }
+.hero-title-num { color: #e8c98a; font-size: 1.12em; }
 .hero-title .ltr { display: inline-block; }
 .hero-slogan {
   font-family: var(--serif); font-style: italic; font-weight: 300;
   font-size: clamp(19px, 2.6vw, 30px); color: var(--ink-soft); margin: 0 0 1.8em;
 }
-.hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px; margin-bottom: 2.6em; }
-.hero-facts {
-  display: flex; justify-content: center; gap: clamp(28px, 5vw, 64px);
-  border-top: 1px solid var(--line); padding-top: 1.6em;
-}
-.hero-facts li { display: flex; flex-direction: column; gap: .15em; }
-.hero-fact-num { font-family: var(--serif); font-size: clamp(24px, 3vw, 34px); color: var(--ink); line-height: 1; }
-.hero-fact-label { font-size: 12px; letter-spacing: .04em; color: var(--ink-soft); text-transform: lowercase; }
 
 /* ============================================================
    БЕГУЩАЯ СТРОКА
@@ -641,14 +656,8 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .hero-img { animation: none !important; }
+  .hero-slide { transition: none !important; }
   .space-item img { transition: none; }
-}
-
-/* Ken-burns on hero */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-img { animation: kenburns 30s ease-in-out infinite alternate; transform-origin: 60% 50%; }
-  @keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.06); } }
 }
 
 /* ============================================================
@@ -689,8 +698,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
   .hero-inner { order: 1; width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); display: block; }
   .hero-text { max-width: none; text-align: left; }
   .hero-title { white-space: normal; }
-  .hero-actions { justify-content: flex-start; }
-  .hero-facts { justify-content: flex-start; gap: clamp(20px, 6vw, 36px); }
   .hero-media { position: relative; order: 2; width: 100%; height: 64vw; max-height: 440px; margin-top: 28px; border-radius: var(--radius); overflow: hidden; }
   .hero-scrim { background: linear-gradient(0deg, rgba(35,36,31,.25), rgba(35,36,31,0) 50%); }
 
