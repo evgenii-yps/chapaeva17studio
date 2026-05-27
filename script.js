@@ -52,8 +52,8 @@
   }
 
   /* ---------- hero letter animation ---------- */
-  /* Each color group (.hero-title-word, .hero-title-num) keeps its own
-     color; letters are wrapped per-group so they inherit it. */
+  /* Letters are wrapped per word-group so the gap between «Чапаева» and
+     «17» (margin on .hero-title-num) survives the per-letter splitting. */
   var title = document.querySelector('[data-letters]');
   if (title) {
     var groups = title.querySelectorAll(':scope > span');
@@ -90,10 +90,10 @@
 
   /* ---------- hero slider ---------- */
   (function () {
-    var slider = document.querySelector('.hero-slider');
-    if (!slider) return;
-    var slides = Array.prototype.slice.call(slider.querySelectorAll('.hero-slide'));
-    var dots = Array.prototype.slice.call(slider.querySelectorAll('.hero-dot'));
+    var hero = document.querySelector('.hero');
+    if (!hero) return;
+    var slides = Array.prototype.slice.call(hero.querySelectorAll('.hero-slide'));
+    var dots = Array.prototype.slice.call(hero.querySelectorAll('.hero-dot'));
     if (slides.length < 2) return;
 
     var INTERVAL = 5000;

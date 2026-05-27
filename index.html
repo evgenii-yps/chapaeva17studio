@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <link rel="preload" as="image" href="/public/images/studio/studio-cadillac-window.webp" type="image/webp">
+  <link rel="preload" as="image" href="/public/images/hero/hero-cadillac-window.webp" type="image/webp">
   <link rel="stylesheet" href="/styles.css">
 
   <script type="application/ld+json">
@@ -75,43 +75,38 @@
 
     <!-- HERO -->
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-media">
-        <div class="hero-slider" role="region" aria-roledescription="carousel" aria-label="Фотографии студии">
-          <div class="hero-slides">
-            <picture class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 из 4">
-              <source srcset="/public/images/studio/studio-cadillac-window.webp" type="image/webp">
-              <img src="/public/images/studio/studio-cadillac-window.jpg" alt="Cadillac у панорамного окна" fetchpriority="high" decoding="async">
-            </picture>
-            <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 из 4">
-              <source srcset="/public/images/studio/studio-towers-wall.webp" type="image/webp">
-              <img src="/public/images/studio/studio-towers-wall.jpg" alt="Общий план студии с двумя тренажёрами" decoding="async">
-            </picture>
-            <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 из 4">
-              <source srcset="/public/images/studio/studio-cadillac-closeup.webp" type="image/webp">
-              <img src="/public/images/studio/studio-cadillac-closeup.jpg" alt="Крупный план пружин Cadillac" decoding="async">
-            </picture>
-            <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 из 4">
-              <source srcset="/public/images/studio/studio-lounge-chair.webp" type="image/webp">
-              <img src="/public/images/studio/studio-lounge-chair.jpg" alt="Зона отдыха с сертификатом Legacy" decoding="async">
-            </picture>
-          </div>
-          <div class="hero-slider-dots" role="tablist" aria-label="Выбор слайда">
-            <button class="hero-dot is-active" type="button" aria-label="Слайд 1 из 4" aria-current="true"></button>
-            <button class="hero-dot" type="button" aria-label="Слайд 2 из 4"></button>
-            <button class="hero-dot" type="button" aria-label="Слайд 3 из 4"></button>
-            <button class="hero-dot" type="button" aria-label="Слайд 4 из 4"></button>
-          </div>
+      <div class="hero-slider" role="region" aria-roledescription="carousel" aria-label="Фотографии студии">
+        <div class="hero-slides">
+          <picture class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="1 из 4">
+            <source srcset="/public/images/hero/hero-cadillac-window.webp" type="image/webp">
+            <img src="/public/images/hero/hero-cadillac-window.jpg" alt="Cadillac у панорамного окна" fetchpriority="high" decoding="async">
+          </picture>
+          <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="2 из 4">
+            <source srcset="/public/images/hero/hero-twin-towers.webp" type="image/webp">
+            <img src="/public/images/hero/hero-twin-towers.jpg" alt="Общий план студии с двумя тренажёрами" decoding="async">
+          </picture>
+          <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="3 из 4">
+            <source srcset="/public/images/hero/hero-springs.webp" type="image/webp">
+            <img src="/public/images/hero/hero-springs.jpg" alt="Крупный план пружин Cadillac" decoding="async">
+          </picture>
+          <picture class="hero-slide" role="group" aria-roledescription="slide" aria-label="4 из 4">
+            <source srcset="/public/images/hero/hero-lounge.webp" type="image/webp">
+            <img src="/public/images/hero/hero-lounge.jpg" alt="Зона отдыха с сертификатом Legacy" decoding="async">
+          </picture>
         </div>
-        <span class="hero-scrim"></span>
-        <p class="hero-badge">Здесь занимаются артисты ведущих петербургских театров</p>
       </div>
-      <div class="container hero-inner">
+      <div class="hero-overlay"></div>
+      <div class="hero-inner">
         <div class="hero-text">
-          <h1 class="hero-title" id="hero-title" data-letters>
-            <span class="hero-title-word">Чапаева</span> <span class="hero-title-num">17</span>
-          </h1>
+          <h1 class="hero-title" id="hero-title" data-letters><span class="hero-title-word">Чапаева</span><span class="hero-title-num">17</span></h1>
           <p class="hero-slogan">Тело знает, как двигаться правильно</p>
         </div>
+      </div>
+      <div class="hero-slider-dots" role="tablist" aria-label="Выбор слайда">
+        <button class="hero-dot is-active" type="button" aria-label="Слайд 1 из 4" aria-current="true"></button>
+        <button class="hero-dot" type="button" aria-label="Слайд 2 из 4"></button>
+        <button class="hero-dot" type="button" aria-label="Слайд 3 из 4"></button>
+        <button class="hero-dot" type="button" aria-label="Слайд 4 из 4"></button>
       </div>
     </section>
 
