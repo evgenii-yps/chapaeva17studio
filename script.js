@@ -479,7 +479,7 @@
   /* ---------- equipment modal ---------- */
   (function () {
     var modal = $('equipment-modal');
-    var trigger = document.querySelector('.space-hero');
+    var trigger = document.querySelector('.space-tile[aria-controls="equipment-modal"]');
     var listEl = $('equipment-list');
     var closeBtn = modal && modal.querySelector('.equipment-modal-close');
     if (!modal || !trigger || !listEl) return;
