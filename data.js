@@ -43,10 +43,10 @@ window.CH17_DATA = (function () {
 
   /* --------------------------------------------------------
      НАПРАВЛЕНИЯ (аккордеон в секции «Цены»)
-     format.isTbd: true → цена ещё не утверждена, показываем «tbd»
-     format.prefix: '~' | 'от' | 'до' — модификатор перед ценой
+     longDescription — многоабзацный текст (абзацы через \n)
+     image — фото для раскрытой строки; null → плейсхолдер
+     prices[] — { format, price }; price: 'tbd' пока не утверждена
   -------------------------------------------------------- */
-  var STUB_SHORT = 'Рыба. Короткое описание направления — заполним позже.';
   var STUB_LONG = 'Рыба.\n\nРазвёрнутое описание направления — заполним позже.\n\nЕщё один абзац для проверки многоабзацной верстки.';
   var STUB_PRICES = [
     { format: 'Разовое', price: 'tbd' },
@@ -62,7 +62,6 @@ window.CH17_DATA = (function () {
       num: '01',
       name: 'Пилатес на оборудовании',
       rangeFrom: 1700,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -72,7 +71,6 @@ window.CH17_DATA = (function () {
       num: '02',
       name: 'Пилатес на матах',
       rangeFrom: 1000,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -82,7 +80,6 @@ window.CH17_DATA = (function () {
       num: '03',
       name: 'Хореография',
       rangeFrom: 1150,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -92,7 +89,6 @@ window.CH17_DATA = (function () {
       num: '04',
       name: 'Йога',
       rangeFrom: 925,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -102,7 +98,6 @@ window.CH17_DATA = (function () {
       num: '05',
       name: 'Растяжка',
       rangeFrom: 925,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -112,7 +107,6 @@ window.CH17_DATA = (function () {
       num: '06',
       name: 'Массаж и восстановление',
       rangeFrom: 4300,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
@@ -123,7 +117,6 @@ window.CH17_DATA = (function () {
       name: 'Балетный интенсив',
       rangeFrom: 30000,
       fixed: true,
-      shortDescription: STUB_SHORT,
       longDescription: STUB_LONG,
       image: null,
       prices: STUB_PRICES.slice()
