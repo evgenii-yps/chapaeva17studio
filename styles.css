@@ -245,7 +245,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
   font-variant-numeric: lining-nums;
   text-shadow: 0 2px 24px rgba(0,0,0,0.45);
 }
-.hero-title-num { margin-left: 0.35em; }
+.hero-title-num { margin-left: 0.18em; }
 .hero-title .ltr { display: inline-block; }
 .hero-slogan {
   font-family: var(--serif); font-style: italic; font-weight: 300;
