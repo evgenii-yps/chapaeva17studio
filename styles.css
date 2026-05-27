@@ -220,7 +220,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-title {
   font-family: var(--serif); font-weight: 300;
   font-size: clamp(64px, 11vw, 220px); line-height: .95; letter-spacing: .01em;
-  margin: 0 0 .18em; color: #c9a35b;
+  margin: 0 0 .18em; color: #d4b87a;
   white-space: nowrap;
   font-feature-settings: "lnum";
   font-variant-numeric: lining-nums;
@@ -244,7 +244,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
   cursor: pointer; transition: transform .25s ease, background-color .25s ease, opacity .25s ease;
 }
 .hero-dot:hover { transform: scale(1.25); opacity: 1; }
-.hero-dot.is-active { background: #c9a35b; border-color: #c9a35b; }
+.hero-dot.is-active { background: #d4b87a; border-color: #d4b87a; }
 
 /* ============================================================
    БЕГУЩАЯ СТРОКА
