@@ -476,6 +476,105 @@
     });
   }
 
+  /* ============================================================
+     МОДАЛКА НАПРАВЛЕНИЯ
+     ============================================================ */
+  var directionModal = $('direction-modal');
+  var directionModalOpener = null;
+
+  function directionModalFocusable() {
+    if (!directionModal) return [];
+    return [].slice.call(directionModal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )).filter(function (n) { return !n.hasAttribute('disabled') && n.offsetParent !== null; });
+  }
+
+  function openDirectionModal(d, opener) {
+    if (!directionModal) return;
+    directionModalOpener = opener || document.activeElement;
+
+    var photo = $('direction-modal-photo');
+    if (d.image) {
+      var webp = d.image.replace(/\.jpg$/, '.webp');
+      photo.className = 'direction-modal-photo';
+      photo.innerHTML =
+        '<picture>' +
+        '<source srcset="' + webp + '" type="image/webp">' +
+        '<img src="' + d.image + '" alt="' + esc(d.name) + '" decoding="async">' +
+        '</picture>';
+    } else {
+      photo.className = 'direction-modal-photo direction-modal-photo--placeholder';
+      photo.innerHTML = '<span aria-hidden="true">' + esc(d.num || '') + '</span>';
+    }
+
+    $('direction-modal-name').textContent = d.name;
+
+    var desc = $('direction-modal-desc');
+    desc.innerHTML = '';
+    String(d.longDescription || '').split('\n').forEach(function (line) {
+      var t = line.trim();
+      if (t) desc.appendChild(el('p', null, esc(t)));
+    });
+
+    var pricesBox = $('direction-modal-prices');
+    pricesBox.innerHTML = '';
+    pricesBox.appendChild(buildPriceMatrix(d.prices));
+
+    var cta = $('direction-modal-cta');
+    cta.onclick = function () {
+      var sel = $('f-direction');
+      if (sel) sel.value = d.name;
+      closeDirectionModal(false);
+      var target = $('booking');
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      var firstField = $('f-name');
+      if (firstField) {
+        setTimeout(function () { firstField.focus({ preventScroll: true }); }, reduceMotion ? 0 : 450);
+      }
+    };
+
+    directionModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { directionModal.classList.add('is-open'); });
+    directionModal.querySelector('.direction-modal-close').focus();
+  }
+
+  function closeDirectionModal(returnFocus) {
+    if (!directionModal || directionModal.hidden) return;
+    directionModal.classList.remove('is-open');
+    var done = function () {
+      directionModal.hidden = true;
+      directionModal.removeEventListener('transitionend', done);
+    };
+    if (reduceMotion) done();
+    else {
+      directionModal.addEventListener('transitionend', done);
+      setTimeout(done, 320);
+    }
+    document.body.style.overflow = '';
+    if (returnFocus !== false && directionModalOpener && typeof directionModalOpener.focus === 'function') {
+      directionModalOpener.focus();
+    }
+  }
+
+  if (directionModal) {
+    directionModal.querySelector('.direction-modal-close').addEventListener('click', closeDirectionModal);
+    directionModal.addEventListener('click', function (e) {
+      if (e.target.hasAttribute('data-close')) closeDirectionModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (directionModal.hidden) return;
+      if (e.key === 'Escape') { closeDirectionModal(); return; }
+      if (e.key === 'Tab') {
+        var f = directionModalFocusable();
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+
   /* ---------- equipment modal ---------- */
   (function () {
     var modal = $('equipment-modal');
@@ -792,31 +891,36 @@
     });
   }
 
-  function fmtFormatPrice(f) {
-    if (f.price == null) return { text: 'tbd', tbd: true };
-    var pre = '';
-    if (f.prefix === '~') pre = '~';
-    else if (f.prefix) pre = f.prefix + ' ';
-    return { text: pre + rub(f.price), tbd: false };
+  function buildPriceMatrix(prices) {
+    var grid = el('div', 'format-grid');
+    (prices || []).forEach(function (p) {
+      var fc = el('div', 'format-card');
+      fc.appendChild(el('span', 'format-name', esc(p.format)));
+      var isTbd = !p.price || String(p.price).toLowerCase() === 'tbd';
+      fc.appendChild(el('span', 'format-price' + (isTbd ? ' format-price--tbd' : ''), isTbd ? 'tbd' : esc(p.price)));
+      grid.appendChild(fc);
+    });
+    return grid;
   }
 
   function renderDirections() {
     var container = $('directions-accordion');
     if (!container) return;
     DATA.directions.forEach(function (d) {
-      var desc = el('p', 'acc-desc', esc(d.description));
-      var matrix = el('div', 'format-grid');
-      (d.formats || []).forEach(function (f) {
-        var fc = el('div', 'format-card');
-        fc.appendChild(el('span', 'format-name', esc(f.name)));
-        var p = fmtFormatPrice(f);
-        fc.appendChild(el('span', 'format-price' + (p.tbd ? ' format-price--tbd' : ''), p.text));
-        matrix.appendChild(fc);
-      });
+      var detail = el('div', 'acc-detail');
+      detail.appendChild(el('p', 'acc-detail-text', esc(d.shortDescription || '')));
+      var more = el('button', 'btn btn-ghost acc-more', 'Подробнее');
+      more.type = 'button';
+      more.setAttribute('aria-haspopup', 'dialog');
+      more.setAttribute('aria-controls', 'direction-modal');
+      more.setAttribute('data-direction-slug', d.id);
+      more.addEventListener('click', function () { openDirectionModal(d, more); });
+      detail.appendChild(more);
+
       var price = d.fixed ? rub(d.rangeFrom) : 'от ' + rub(d.rangeFrom);
       var built = buildAccItem({
-        num: d.num, name: d.name, sub: d.sub, price: price,
-        panelNodes: [desc, matrix], idBase: 'dir-' + d.id
+        num: d.num, name: d.name, price: price,
+        panelNodes: [detail], idBase: 'dir-' + d.id
       });
       container.appendChild(built.item);
     });

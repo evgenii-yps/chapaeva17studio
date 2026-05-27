@@ -50,103 +50,87 @@ window.CH17_DATA = (function () {
      format.isTbd: true → цена ещё не утверждена, показываем «tbd»
      format.prefix: '~' | 'от' | 'до' — модификатор перед ценой
   -------------------------------------------------------- */
+  var STUB_SHORT = 'Рыба. Короткое описание направления — заполним позже.';
+  var STUB_LONG = 'Рыба.\n\nРазвёрнутое описание направления — заполним позже.\n\nЕщё один абзац для проверки многоабзацной верстки.';
+  var STUB_PRICES = [
+    { format: 'Разовое', price: 'tbd' },
+    { format: 'Абонемент', price: 'tbd' },
+    { format: 'Индивидуальное', price: 'tbd' },
+    { format: 'Сплит на двоих', price: 'tbd' },
+    { format: 'Мини-группа', price: 'tbd' }
+  ];
+
   var directions = [
     {
       id: 'pilates-equipment',
       num: '01',
       name: 'Пилатес на оборудовании',
-      sub: 'реформер · кадиллак · бочки',
       rangeFrom: 1700,
-      description: 'Работа на Legacy — точно настроенное сопротивление пружин, безопасно при любых ограничениях. Подходит беременным, людям после реабилитации, тем, кто хочет глубокую работу с осанкой и центром тела.',
-      formats: [
-        { name: 'Разовое групповое', price: 1700, isTbd: false },
-        { name: 'Абонемент', price: null, isTbd: true },
-        { name: 'Индивидуальное', price: 4500, isTbd: true, prefix: '~' },
-        { name: 'Сплит на двоих', price: null, isTbd: true },
-        { name: 'Мини-группа', price: null, isTbd: true }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'pilates-mat',
       num: '02',
       name: 'Пилатес на матах',
-      sub: 'без оборудования · для группы',
       rangeFrom: 1000,
-      description: 'Классический пилатес без реформера. Работа с собственным весом, малым оборудованием. Хорош для группового формата и тех, кто только знакомится с методом.',
-      formats: [
-        { name: 'Разовое групповое', price: 1000, isTbd: false },
-        { name: 'Абонемент', price: null, isTbd: true },
-        { name: 'Индивидуальное', price: null, isTbd: true },
-        { name: 'Сплит на двоих', price: null, isTbd: true },
-        { name: 'Мини-группа', price: null, isTbd: true }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'choreography',
       num: '03',
       name: 'Хореография',
-      sub: 'дети · взрослые · классика и современная',
       rangeFrom: 1150,
-      description: 'Балет, barre, современная хореография. Преподают действующие артисты Мариинского театра. Детям с 7 лет, взрослым в любом возрасте.',
-      formats: [
-        { name: 'Разовое групповое', price: 1150, isTbd: false },
-        { name: 'Абонемент', price: null, isTbd: true },
-        { name: 'Индивидуальное', price: null, isTbd: true },
-        { name: 'Мини-группа', price: null, isTbd: true }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'yoga',
       num: '04',
       name: 'Йога',
-      sub: 'хатха · кундалини · виброакустика',
       rangeFrom: 925,
-      description: 'Хатха для подвижности тела. Кундалини и виброакустика — для работы с дыханием и состоянием. Ведёт Манприт Ади Каур.',
-      formats: [
-        { name: 'Разовое групповое', price: 925, isTbd: false },
-        { name: 'Абонемент', price: null, isTbd: true },
-        { name: 'Индивидуальное', price: null, isTbd: true }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'stretching',
       num: '05',
       name: 'Растяжка',
-      sub: 'пассивная · с тренером · парная',
       rangeFrom: 925,
-      description: 'Работа над гибкостью без перегрузки суставов. Как отдельная практика и как восстановительный блок после интенсивных тренировок.',
-      formats: [
-        { name: 'Разовое групповое', price: 925, isTbd: false },
-        { name: 'Индивидуальное', price: 3000, isTbd: true, prefix: '~' },
-        { name: 'Парная', price: null, isTbd: true },
-        { name: 'Абонемент', price: null, isTbd: true }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'massage',
       num: '06',
       name: 'Массаж и восстановление',
-      sub: 'спортивный · миофасциальный · остеопатия',
       rangeFrom: 4300,
-      description: 'Отдельный кабинет восстановления. Работают приглашённые специалисты. Заходить можно отдельным сеансом или сразу после тренировки.',
-      formats: [
-        { name: 'Спортивный массаж, 60 мин', price: 4300, isTbd: false, prefix: 'от' },
-        { name: 'Миофасциальный', price: null, isTbd: true },
-        { name: 'Остеопатия', price: 7000, isTbd: false, prefix: 'до' }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     },
     {
       id: 'ballet-intensive',
       num: '07',
       name: 'Балетный интенсив',
-      sub: 'июнь · 20 занятий · мини-группа',
       rangeFrom: 30000,
       fixed: true,
-      description: 'Сезонный продукт. 1–30 июня, 5 дней в неделю, 20 занятий по 2 часа. Мини-группы 3–6 человек, с 7 лет.',
-      formats: [
-        { name: 'Полный курс', price: 30000, isTbd: false },
-        { name: 'Пробное', price: 1000, isTbd: false }
-      ]
+      shortDescription: STUB_SHORT,
+      longDescription: STUB_LONG,
+      image: null,
+      prices: STUB_PRICES.slice()
     }
   ];
 

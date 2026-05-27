@@ -463,6 +463,54 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 
 /* ============================================================
+   МОДАЛКА НАПРАВЛЕНИЯ
+   ============================================================ */
+.direction-modal { position: fixed; inset: 0; z-index: 210; display: grid; place-items: center; padding: clamp(16px, 4vw, 48px); }
+.direction-modal[hidden] { display: none; }
+.direction-modal-backdrop {
+  position: absolute; inset: 0; background: rgba(20, 20, 18, 0.78);
+  opacity: 0; transition: opacity .24s ease;
+}
+.direction-modal.is-open .direction-modal-backdrop { opacity: 1; }
+.direction-modal-dialog {
+  position: relative; z-index: 1;
+  width: min(640px, 100%); max-height: 88vh; overflow-y: auto;
+  background: var(--cream); border-radius: var(--radius);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .45);
+  opacity: 0; transform: scale(.94); transition: opacity .22s ease, transform .22s ease;
+}
+.direction-modal.is-open .direction-modal-dialog { opacity: 1; transform: scale(1); }
+.direction-modal-photo { position: relative; aspect-ratio: 16 / 9; background: linear-gradient(160deg, var(--sage) 0%, var(--sage-dark) 100%); }
+.direction-modal-photo picture, .direction-modal-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.direction-modal-photo--placeholder { display: grid; place-items: center; }
+.direction-modal-photo--placeholder span {
+  font-family: var(--serif); font-size: clamp(56px, 9vw, 110px);
+  color: rgba(240, 234, 224, .55); letter-spacing: .04em;
+}
+.direction-modal-body { padding: clamp(28px, 3.4vw, 48px); }
+.direction-modal-eyebrow { margin-bottom: .9em; }
+.direction-modal-name {
+  font-family: var(--serif); font-weight: 400; line-height: 1.05; color: var(--ink);
+  font-size: clamp(28px, 3.4vw, 42px); margin: 0 0 .7em;
+}
+.direction-modal-desc { margin: 0 0 1.8em; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.6; color: var(--ink-soft); }
+.direction-modal-desc p { margin: 0 0 1em; }
+.direction-modal-desc p:last-child { margin-bottom: 0; }
+.direction-modal-prices { margin: 0 0 1.8em; }
+.direction-modal-cta { width: 100%; justify-content: center; }
+.direction-modal-close {
+  position: absolute; top: 12px; right: 14px; z-index: 2;
+  background: rgba(20, 20, 18, .35); border: 0; border-radius: 50%; padding: 0; cursor: pointer;
+  width: 40px; height: 40px; font-size: 30px; line-height: 40px; text-align: center;
+  color: #fff; opacity: .85; transition: opacity .2s ease;
+}
+.direction-modal-close:hover { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .direction-modal-backdrop, .direction-modal-dialog { transition: none; }
+}
+
+/* ============================================================
    НАПРАВЛЕНИЯ И ЦЕНЫ — аккордеон
    ============================================================ */
 .prices { background: var(--cream-warm); position: relative; }
@@ -476,7 +524,6 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .acc-num { font-family: var(--serif); font-size: clamp(18px, 2vw, 24px); color: var(--gold-light); }
 .acc-titles { min-width: 0; }
 .acc-name { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.8vw, 34px); line-height: 1.1; color: var(--ink); }
-.acc-sub { display: block; font-size: 13px; letter-spacing: .03em; color: var(--ink-soft); margin-top: .35em; }
 .acc-price { font-family: var(--serif); font-size: clamp(16px, 1.8vw, 22px); color: var(--ink); white-space: nowrap; }
 .acc-toggle {
   position: relative; width: 30px; height: 30px; flex: none;
@@ -494,6 +541,12 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .acc-panel { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
 .acc-panel-inner { padding: 0 0 clamp(26px, 3.4vw, 40px); }
 .acc-desc { color: var(--ink-soft); margin: 0 0 1.6em; max-width: 720px; }
+.acc-detail {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+}
+.acc-detail-text { color: var(--ink-soft); margin: 0; max-width: 640px; line-height: 1.6; }
+.acc-more { flex: none; white-space: nowrap; }
 .format-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .format-card {
   display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
@@ -730,7 +783,8 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 
   .acc-head { grid-template-columns: auto 1fr auto; gap: 14px 16px; }
   .acc-price { grid-column: 2 / 3; grid-row: 2; font-size: 16px; }
-  .acc-sub { display: none; }
+  .acc-detail { grid-template-columns: 1fr; align-items: stretch; gap: 20px; }
+  .acc-more { width: 100%; max-width: none; justify-content: center; }
   .format-grid { grid-template-columns: 1fr; }
 
   .lightbox-prev, .lightbox-next { font-size: 40px; }
