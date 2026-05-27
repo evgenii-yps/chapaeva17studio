@@ -192,6 +192,10 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 
 /* --- full-bleed slider --- */
 .hero-slider { position: absolute; inset: 0; z-index: 0; }
+.hero-slider::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: rgba(0, 0, 0, 0.2); pointer-events: none;
+}
 .hero-slides { position: absolute; inset: 0; }
 .hero-slide {
   position: absolute; inset: 0; display: block;
@@ -201,7 +205,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 
 .hero-overlay {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background: linear-gradient(
     to bottom,
     rgba(20,22,20,0.35) 0%,
@@ -212,7 +216,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 
 .hero-inner {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
   width: 100%; padding: 0 var(--gutter);
   display: flex; justify-content: center;
 }
@@ -235,7 +239,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 
 .hero-slider-dots {
-  position: absolute; left: 0; right: 0; bottom: 30px; z-index: 2;
+  position: absolute; left: 0; right: 0; bottom: 30px; z-index: 3;
   display: flex; justify-content: center; gap: 12px;
 }
 .hero-dot {
