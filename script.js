@@ -990,6 +990,7 @@
       if (data._honey || (Date.now() - pageLoadedAt) < 2000) { showThanks(); return; }
       if (data.name.length < 2) { setStatus('Пожалуйста, укажите имя.', true); form.name.focus(); return; }
       if (data.phone.length < 6) { setStatus('Пожалуйста, укажите телефон.', true); form.phone.focus(); return; }
+      if (!data.channel) { setStatus('Пожалуйста, выберите способ связи.', true); var firstChannel = form.querySelector('input[name="channel"]'); if (firstChannel) firstChannel.focus(); return; }
 
       var submitBtn = form.querySelector('.btn-submit');
       submitBtn.disabled = true;
