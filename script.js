@@ -974,6 +974,22 @@
   }
 
   if (form) {
+    var contactLinkField = $('contact-link-field');
+    var contactLinkInput = $('f-contact-link');
+    function syncContactLink() {
+      var channel = (form.querySelector('input[name="channel"]:checked') || {}).value || '';
+      var needsLink = channel === 'telegram' || channel === 'vk';
+      if (contactLinkField) contactLinkField.hidden = !needsLink;
+      if (contactLinkInput) {
+        contactLinkInput.required = needsLink;
+        if (!needsLink) contactLinkInput.value = '';
+      }
+    }
+    [].slice.call(form.querySelectorAll('input[name="channel"]')).forEach(function (r) {
+      r.addEventListener('change', syncContactLink);
+    });
+    syncContactLink();
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       setStatus('');
@@ -982,6 +998,7 @@
         name: form.name.value.trim(),
         phone: form.phone.value.trim(),
         channel: (form.querySelector('input[name="channel"]:checked') || {}).value || '',
+        contact_link: form.contact_link ? form.contact_link.value.trim() : '',
         direction: form.direction.value,
         comment: form.comment.value.trim(),
         _honey: form._honey.value
@@ -991,6 +1008,7 @@
       if (data.name.length < 2) { setStatus('Пожалуйста, укажите имя.', true); form.name.focus(); return; }
       if (data.phone.length < 6) { setStatus('Пожалуйста, укажите телефон.', true); form.phone.focus(); return; }
       if (!data.channel) { setStatus('Пожалуйста, выберите способ связи.', true); var firstChannel = form.querySelector('input[name="channel"]'); if (firstChannel) firstChannel.focus(); return; }
+      if ((data.channel === 'telegram' || data.channel === 'vk') && !data.contact_link) { setStatus('Укажите ссылку на вашу соцсеть', true); if (contactLinkInput) contactLinkInput.focus(); return; }
 
       var submitBtn = form.querySelector('.btn-submit');
       submitBtn.disabled = true;
