@@ -682,7 +682,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
    FOOTER
    ============================================================ */
 .site-footer { background: var(--ink); color: var(--cream); padding: clamp(48px, 7vw, 80px) 0 clamp(28px, 4vw, 40px); }
-.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: clamp(28px, 4vw, 56px); }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: clamp(28px, 4vw, 56px); }
 .footer-col-title { font-family: var(--serif); text-transform: uppercase; letter-spacing: .2em; font-size: 12px; color: var(--gold-light); margin: 0 0 1.2em; }
 .footer-col ul li { margin-bottom: .6em; }
 .footer-col a { color: rgba(240,234,224,.78); font-size: 15px; }
@@ -691,6 +691,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .brand--footer:hover { color: var(--cream); }
 .brand--footer .brand-mark { border-color: rgba(240,234,224,.4); color: var(--gold-light); }
 .footer-address { font-size: 14px; color: rgba(240,234,224,.7); line-height: 1.7; margin: 0; }
+.footer-operator { font-size: 13px; color: rgba(240,234,224,.5); line-height: 1.6; margin: 1em 0 0; }
 .footer-col .social-muted { color: rgba(240,234,224,.5); }
 .footer-bottom {
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
@@ -698,6 +699,8 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
   border-top: 1px solid rgba(240,234,224,.14);
 }
 .footer-bottom p { margin: 0; font-size: 13px; color: rgba(240,234,224,.55); }
+.footer-bottom a { color: rgba(240,234,224,.7); }
+.footer-bottom a:hover { color: var(--gold-light); }
 
 /* ============================================================
    LIGHTBOX
