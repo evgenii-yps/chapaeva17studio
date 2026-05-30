@@ -656,6 +656,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 @media (max-width: 560px) {
   .yclients-frame iframe { height: 760px; }
 }
+.booking-consent-note { max-width: 545px; margin: 1.2em auto 0; text-align: center; color: var(--ink-soft); font-size: 13px; line-height: 1.5; }
 
 .booking-info {
   background: var(--cream-warm); border-radius: var(--radius);
