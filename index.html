@@ -216,6 +216,25 @@
 
     <!-- ФОРМА ЗАПИСИ -->
     <section class="booking section" id="booking" aria-labelledby="booking-title">
+
+      <!--
+        ИНСТРУКЦИЯ ПО ПОДКЛЮЧЕНИЮ YCLIENTS (вариант iframe):
+        1. В YClients: Онлайн-запись → настроить → получить код формы (iframe).
+        2. Заменить блок .yclients-placeholder ниже на полученный <iframe>.
+        3. В коде iframe заменить wXXXXXX.yclients.com на реальную ссылку компании.
+        4. Для узких блоков использовать мобильную версию формы (width/height регулируются).
+        5. После проверки — удалить старую форму #booking и api/submit.js (отдельным ТЗ).
+      -->
+      <div class="container yclients-section">
+        <div id="yclients-widget-container" class="yclients-widget">
+          <!-- Сюда позже вставится iframe YClients. Пока заглушка. -->
+          <div class="yclients-placeholder">
+            <p class="eyebrow">Онлайн-запись</p>
+            <p class="yclients-placeholder-text">Онлайн-запись YClients скоро будет доступна</p>
+          </div>
+        </div>
+      </div>
+
       <div class="container booking-inner">
         <div class="booking-form-col">
           <div class="section-head">

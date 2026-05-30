@@ -645,6 +645,32 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .booking-info-list li:first-child { border-top: 0; padding-top: 0; }
 .info-icon { width: 22px; height: 22px; flex: none; margin-top: .15em; fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
+/* ---------- онлайн-запись YClients (контейнер под встроенный iframe) ----------
+   Временная заглушка. Заменяется на реальный <iframe> YClients одной правкой
+   (см. инструкцию в index.html рядом с #yclients-widget-container). */
+.yclients-section { margin-bottom: clamp(40px, 6vw, 72px); }
+.yclients-widget {
+  width: 100%;
+  max-width: 545px;          /* полная версия формы YClients — 545px, по центру секции */
+  margin: 0 auto;
+}
+.yclients-widget iframe { display: block; width: 100%; border: 0; }
+.yclients-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .6em; min-height: 280px; text-align: center;
+  padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 40px);
+  background: var(--cream-warm); color: var(--ink);
+  border: 1px dashed var(--line); border-radius: var(--radius);
+}
+.yclients-placeholder-text {
+  font-family: var(--serif); font-size: clamp(20px, 3vw, 26px);
+  color: var(--ink-soft); margin: 0;
+}
+/* на узких экранах — мобильная версия формы тянется по ширине (отступы даёт .container) */
+@media (max-width: 560px) {
+  .yclients-widget { max-width: 100%; }
+}
+
 /* ============================================================
    КОНТАКТЫ
    ============================================================ */
