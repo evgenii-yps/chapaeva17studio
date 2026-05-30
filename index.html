@@ -220,66 +220,18 @@
         <div class="booking-form-col">
           <div class="section-head">
             <p class="eyebrow">Запись</p>
-            <h2 class="h2" id="booking-title">Оставьте заявку</h2>
-            <p class="booking-sub">Мы свяжемся и подберём направление и время под вас.</p>
+            <h2 class="h2" id="booking-title">Онлайн-запись</h2>
+            <p class="booking-sub">Выберите направление, дату и время — запись подтвердится автоматически.</p>
           </div>
 
-          <form class="booking-form" id="booking-form" novalidate>
-            <div class="field">
-              <label for="f-name">Имя</label>
-              <input type="text" id="f-name" name="name" minlength="2" required autocomplete="name" placeholder="Как к вам обращаться">
+          <div class="yclients-embed">
+            <div class="yclients-frame">
+              <iframe
+                src="https://n1727175.yclients.com"
+                title="Онлайн-запись"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
-
-            <div class="field">
-              <label for="f-phone">Телефон</label>
-              <input type="tel" id="f-phone" name="phone" required autocomplete="tel" inputmode="tel" placeholder="+7 ___ ___ __ __">
-            </div>
-
-            <fieldset class="field field--radio">
-              <legend>Как с вами связаться</legend>
-              <label class="radio"><input type="radio" name="channel" value="telegram" required> Telegram</label>
-              <label class="radio"><input type="radio" name="channel" value="vk"> ВКонтакте</label>
-              <label class="radio"><input type="radio" name="channel" value="phone"> Телефонный звонок</label>
-            </fieldset>
-
-            <div class="field" id="contact-link-field" hidden>
-              <label for="f-contact-link">Ссылка</label>
-              <input type="text" id="f-contact-link" name="contact_link" autocomplete="off" placeholder="Укажите ссылку на вашу соцсеть">
-            </div>
-
-            <div class="field">
-              <label for="f-direction">Направление</label>
-              <select id="f-direction" name="direction">
-                <option value="Нужна консультация" selected>Нужна консультация</option>
-                <option value="Пилатес на оборудовании">Пилатес на оборудовании</option>
-                <option value="Пилатес на матах">Пилатес на матах</option>
-                <option value="Хореография">Хореография</option>
-                <option value="Йога">Йога</option>
-                <option value="Растяжка">Растяжка</option>
-                <option value="Массаж и восстановление">Массаж и восстановление</option>
-                <option value="Балетный интенсив">Балетный интенсив</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="f-comment">Комментарий <span class="optional">— необязательно</span></label>
-              <textarea id="f-comment" name="comment" maxlength="500" rows="3" placeholder="Что для вас важно, есть ли опыт или ограничения"></textarea>
-            </div>
-
-            <div class="hp" aria-hidden="true">
-              <label for="f-company">Не заполняйте это поле</label>
-              <input type="text" id="f-company" name="_honey" tabindex="-1" autocomplete="off">
-            </div>
-
-            <button class="btn btn-primary btn-submit" type="submit">Отправить заявку</button>
-            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-            <p class="form-consent">Нажимая «Отправить», вы соглашаетесь с <a href="/privacy.html">обработкой персональных данных</a>.</p>
-          </form>
-
-          <div class="booking-thanks" id="booking-thanks" hidden>
-            <h2 class="h2">Спасибо</h2>
-            <p>Мы свяжемся с вами в течение часа в рабочее время.<br>А пока — загляните в наш Telegram-канал.</p>
-            <a class="btn btn-ghost" href="https://t.me/chapaeva17_studio" target="_blank" rel="noopener">Перейти в Telegram →</a>
           </div>
         </div>
 
