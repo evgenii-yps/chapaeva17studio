@@ -636,9 +636,8 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 .booking-thanks { max-width: 520px; }
 .booking-thanks p { color: var(--ink-soft); margin: 1.2em 0 2em; }
 
-/* YClients online-booking embed — preview block under #booking-form */
-.yclients-embed { margin-top: clamp(40px, 6vw, 72px); }
-.yclients-embed .section-head { margin-bottom: 1.4em; }
+/* YClients online-booking embed */
+.yclients-embed { margin-top: clamp(20px, 3vw, 32px); }
 .yclients-frame {
   width: 100%;
   max-width: 545px;
