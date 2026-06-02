@@ -191,8 +191,9 @@
     var grid = $('promo-grid');
     var countEl = $('promos-count');
     if (!section || !grid) return;
+    var trialCard = $('trial-promo-card');
     var active = DATA.promos.filter(function (p) { return p.active && p.title; });
-    if (!active.length) { section.hidden = true; return; }
+    if (!active.length && !trialCard) { section.hidden = true; return; }
     section.hidden = false;
     if (countEl) countEl.textContent = active.length + ' активных';
 
@@ -237,7 +238,8 @@
       foot.appendChild(cta);
 
       card.appendChild(foot);
-      grid.appendChild(card);
+      if (trialCard) grid.insertBefore(card, trialCard);
+      else grid.appendChild(card);
     });
   }
 
