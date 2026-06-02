@@ -605,9 +605,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .trial-price { margin: 0 0 1.6em; display: flex; align-items: baseline; justify-content: center; gap: .6em; }
 .trial-price-new { font-family: var(--serif); font-size: clamp(36px, 5vw, 52px); color: var(--gold); line-height: 1; }
 .trial-price-badge {
-  align-self: center; font-family: var(--sans); font-size: 14px; font-weight: 600; letter-spacing: .04em;
-  color: var(--gold); padding: .3em .7em; border: 1px solid var(--gold); border-radius: 999px;
-  background: rgba(184, 146, 76, 0.08);
+  font-family: var(--serif); font-size: clamp(36px, 5vw, 52px); color: var(--gold); line-height: 1;
 }
 
 /* Карточка пробного внутри ряда «Акции» — приведена к формату promo-card */
@@ -619,10 +617,10 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   transition: transform .35s ease, box-shadow .35s ease;
 }
 .trial-card--promo:hover { transform: translateY(-6px); box-shadow: 0 28px 70px rgba(0,0,0,.1); }
-.trial-card--promo .h2 { font-size: clamp(22px, 2.6vw, 30px); margin-bottom: .6em; }
-.trial-card--promo .trial-list { display: block; text-align: left; margin: 0 0 1.4em; }
+.trial-card--promo .h2 { font-size: clamp(25px, 2.9vw, 34px); margin-bottom: .6em; }
+.trial-card--promo .trial-list { display: block; text-align: left; margin: 0 0 1.4em; font-size: 1.12em; }
 .trial-card--promo .trial-price { justify-content: flex-start; margin: 0 0 1.4em; }
-.trial-card--promo .btn { align-self: flex-start; margin-top: auto; }
+.trial-card--promo .btn { align-self: flex-start; margin-top: auto; font-size: clamp(13px, 1.25vw, 16px); }
 
 /* ============================================================
    ФОРМА
