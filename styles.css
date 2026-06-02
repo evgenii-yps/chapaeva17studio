@@ -108,9 +108,10 @@ button { font-family: inherit; cursor: pointer; }
 
 .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 .section { padding: clamp(64px, 11vw, 140px) 0; }
-main > section[id], #pricing { scroll-margin-top: 132px; }
+main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .anchor { position: absolute; top: -132px; }
-@media (max-width: 760px) { main > section[id], #pricing { scroll-margin-top: 96px; } }
+.section-anchor { display: block; }
+@media (max-width: 760px) { main > section[id], #pricing, .section-anchor { scroll-margin-top: 96px; } }
 
 .skip-link {
   position: absolute; left: -9999px; top: 0; z-index: 1000;
@@ -398,6 +399,7 @@ main > section[id], #pricing { scroll-margin-top: 132px; }
 }
 .about-text p { margin: 0 0 1.2em; color: var(--ink-soft); font-size: clamp(16px, 1.4vw, 18px); }
 .about-text p:last-child { margin-bottom: 0; }
+.space-about-text { max-width: 760px; }
 
 /* ============================================================
    КОМАНДА
