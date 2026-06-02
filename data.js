@@ -29,13 +29,13 @@ window.CH17_DATA = (function () {
       id: 'ballet-intensive-summer',
       active: true,
       hot: true,
-      tag: 'До 30 июня',
+      tag: 'До конца лета',
       title: 'Балетный интенсив — 30 000 ₽',
       emphasis: '30 000 ₽',
       description: '20 занятий по 2 часа в мини-группе 3–6 человек. Полный июньский курс.',
       counter: null,
       meta: 'Старт 1 июня',
-      status: 'Идёт набор',
+      status: 'Идёт сейчас',
       ctaText: 'Подробнее',
       ctaAction: 'scroll-to-prices'
     }
