@@ -757,10 +757,9 @@
 
       var photo = el('div', 'acc-photo');
       if (d.image) {
-        var webp = d.image.replace(/\.jpg$/, '.webp');
         photo.innerHTML =
           '<picture>' +
-          '<source srcset="' + webp + '" type="image/webp">' +
+          (d.imageWebp ? '<source srcset="' + d.imageWebp + '" type="image/webp">' : '') +
           '<img src="' + d.image + '" alt="' + esc(d.name) + '" loading="lazy" decoding="async">' +
           '</picture>';
       } else {
@@ -776,7 +775,11 @@
         if (t) desc.appendChild(el('p', null, esc(t)));
       });
       content.appendChild(desc);
-      content.appendChild(buildPriceMatrix(d.prices));
+      if (d.priceNote) {
+        content.appendChild(el('p', 'acc-price-note', esc(d.priceNote)));
+      } else {
+        content.appendChild(buildPriceMatrix(d.prices));
+      }
 
       var cta = el('button', 'btn btn-primary acc-cta', 'Записаться');
       cta.type = 'button';
