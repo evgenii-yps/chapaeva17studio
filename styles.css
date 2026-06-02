@@ -339,7 +339,8 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .promos[hidden] { display: none; }
 .promos-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .promos-count { font-family: var(--serif); font-style: italic; font-size: clamp(16px, 1.6vw, 20px); color: var(--sage-dark); margin: 0; white-space: nowrap; }
-.promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 32px); align-items: stretch; }
+.promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 32px); align-items: stretch; }
+.promo-grid .promo-card { grid-column: 1; }
 .promo-card {
   display: flex; flex-direction: column;
   background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius);
@@ -612,6 +613,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 /* Карточка пробного внутри ряда «Акции» — приведена к формату promo-card */
 .trial-card--promo {
   max-width: none; margin: 0; text-align: left;
+  grid-column: 2; grid-row: 1 / span 2;
   padding: clamp(24px, 3vw, 40px);
   display: flex; flex-direction: column;
   transition: transform .35s ease, box-shadow .35s ease;
@@ -790,7 +792,6 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 }
 
 @media (max-width: 860px) {
-  .promo-grid { grid-template-columns: repeat(2, 1fr); }
   .booking-inner { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }
   .contacts-inner { grid-template-columns: 1fr; }
@@ -827,6 +828,8 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 
   .promos-head { flex-direction: column; align-items: flex-start; gap: 6px; }
   .promo-grid { grid-template-columns: 1fr; }
+  .promo-grid .promo-card { grid-column: auto; }
+  .trial-card--promo { grid-column: auto; grid-row: auto; }
 
   .team-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
 
