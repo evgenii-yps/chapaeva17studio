@@ -339,7 +339,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .promos[hidden] { display: none; }
 .promos-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .promos-count { font-family: var(--serif); font-style: italic; font-size: clamp(16px, 1.6vw, 20px); color: var(--sage-dark); margin: 0; white-space: nowrap; }
-.promo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(20px, 3vw, 32px); }
+.promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 32px); align-items: stretch; }
 .promo-card {
   display: flex; flex-direction: column;
   background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius);
@@ -609,6 +609,19 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   background: rgba(184, 146, 76, 0.08);
 }
 
+/* Карточка пробного внутри ряда «Акции» — приведена к формату promo-card */
+.trial-card--promo {
+  max-width: none; margin: 0; text-align: left;
+  padding: clamp(24px, 3vw, 40px);
+  display: flex; flex-direction: column;
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+.trial-card--promo:hover { transform: translateY(-6px); box-shadow: 0 28px 70px rgba(0,0,0,.1); }
+.trial-card--promo .h2 { font-size: clamp(22px, 2.6vw, 30px); margin-bottom: .6em; }
+.trial-card--promo .trial-list { display: block; text-align: left; margin: 0 0 1.4em; }
+.trial-card--promo .trial-price { justify-content: flex-start; margin: 0 0 1.4em; }
+.trial-card--promo .btn { align-self: flex-start; margin-top: auto; }
+
 /* ============================================================
    ФОРМА
    ============================================================ */
@@ -777,6 +790,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 }
 
 @media (max-width: 860px) {
+  .promo-grid { grid-template-columns: repeat(2, 1fr); }
   .booking-inner { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }
   .contacts-inner { grid-template-columns: 1fr; }
