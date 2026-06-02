@@ -589,7 +589,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
    ============================================================ */
 .trial { background: var(--cream-warm); }
 .trial-card {
-  max-width: 620px; margin: 0 auto; text-align: center;
+  max-width: 620px; margin: 0 0 0 auto; text-align: center;
   background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius);
   padding: clamp(36px, 6vw, 72px); box-shadow: var(--soft-shadow);
 }
@@ -603,7 +603,11 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 }
 .trial-price { margin: 0 0 1.6em; display: flex; align-items: baseline; justify-content: center; gap: .6em; }
 .trial-price-new { font-family: var(--serif); font-size: clamp(36px, 5vw, 52px); color: var(--gold); line-height: 1; }
-.trial-price-old { font-family: var(--serif); font-size: clamp(20px, 2.4vw, 26px); color: var(--ink-soft); text-decoration: line-through; }
+.trial-price-badge {
+  align-self: center; font-family: var(--sans); font-size: 14px; font-weight: 600; letter-spacing: .04em;
+  color: var(--gold); padding: .3em .7em; border: 1px solid var(--gold); border-radius: 999px;
+  background: rgba(184, 146, 76, 0.08);
+}
 
 /* ============================================================
    ФОРМА
