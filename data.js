@@ -64,7 +64,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 1700,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
@@ -74,7 +74,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 1000,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
@@ -84,7 +84,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 1150,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
@@ -94,7 +94,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 925,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
@@ -104,7 +104,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 925,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
@@ -114,7 +114,7 @@ window.CH17_DATA = (function () {
       rangeFrom: 4300,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: 'Уточнить индивидуально',
+      priceNote: { value: 'Индивидуально' },
       prices: null
     },
     {
