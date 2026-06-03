@@ -64,7 +64,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 1700,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'pilates-mat',
@@ -73,7 +74,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 1000,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'choreography',
@@ -82,7 +84,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 1150,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'yoga',
@@ -91,7 +94,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 925,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'stretching',
@@ -100,7 +104,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 925,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'massage',
@@ -109,7 +114,8 @@ window.CH17_DATA = (function () {
       rangeFrom: 4300,
       longDescription: STUB_LONG,
       image: null,
-      prices: STUB_PRICES.slice()
+      priceNote: 'Уточнить индивидуально',
+      prices: null
     },
     {
       id: 'ballet-intensive',

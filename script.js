@@ -798,7 +798,7 @@
       content.appendChild(cta);
       detail.appendChild(content);
 
-      var price = d.fixed ? rub(d.rangeFrom) : 'от ' + rub(d.rangeFrom);
+      var price = d.fixed ? rub(d.rangeFrom) : (d.priceNote ? '' : 'от ' + rub(d.rangeFrom));
       var built = buildAccItem({
         num: d.num, name: d.name, price: price,
         panelNodes: [detail], idBase: 'dir-' + d.id
