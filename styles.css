@@ -561,6 +561,20 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .format-price { font-family: var(--serif); font-size: 18px; color: var(--ink); white-space: nowrap; }
 .format-price--tbd { font-style: italic; color: var(--ink-soft); opacity: .7; font-size: 15px; }
 .acc-price-note { margin: 0; font-family: var(--serif); font-size: clamp(18px, 1.8vw, 22px); color: var(--ink); }
+.acc-price-box {
+  display: flex; flex-direction: column; gap: .35em;
+  background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px;
+}
+.acc-price-eyebrow {
+  font-family: var(--serif); text-transform: uppercase; letter-spacing: .18em;
+  font-size: 11px; font-weight: 500; color: var(--sage);
+}
+.acc-price-value {
+  font-family: var(--serif); font-weight: 400; line-height: 1.05;
+  font-size: clamp(28px, 4vw, 34px); color: var(--ink); overflow-wrap: anywhere;
+}
+.acc-price-sub { font-family: var(--sans); font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
 
 /* ============================================================
    ПРОСТРАНСТВО

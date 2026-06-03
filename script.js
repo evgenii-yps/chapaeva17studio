@@ -751,6 +751,14 @@
     return grid;
   }
 
+  function buildPriceBlock(info) {
+    var box = el('div', 'acc-price-box');
+    box.appendChild(el('span', 'acc-price-eyebrow', info.label || 'Стоимость'));
+    box.appendChild(el('span', 'acc-price-value', info.value || ''));
+    box.appendChild(el('span', 'acc-price-sub', info.note || 'зависит от формата и длительности — уточняйте'));
+    return box;
+  }
+
   function renderDirections() {
     var container = $('directions-accordion');
     if (!container) return;
@@ -777,7 +785,9 @@
         if (t) desc.appendChild(el('p', null, esc(t)));
       });
       content.appendChild(desc);
-      if (d.priceNote) {
+      if (d.priceNote && typeof d.priceNote === 'object') {
+        content.appendChild(buildPriceBlock(d.priceNote));
+      } else if (d.priceNote) {
         content.appendChild(el('p', 'acc-price-note', esc(d.priceNote)));
       } else {
         content.appendChild(buildPriceMatrix(d.prices));
