@@ -473,10 +473,14 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   color: rgba(240, 234, 224, .55); letter-spacing: .04em;
 }
 .team-modal-body {
-  padding: clamp(56px, 5vw, 60px) clamp(28px, 3.4vw, 40px) clamp(28px, 3.4vw, 40px);
+  padding: clamp(56px, 5vw, 60px) clamp(28px, 3.4vw, 40px) 0;
   overflow-y: auto;
   display: flex; flex-direction: column; align-items: flex-start;
 }
+/* Спейсер вместо padding-bottom: в скролл-контейнере на flex-column нижний
+   padding не рендерится в конце прокрутки (баг Chromium) — реальный flex-элемент
+   с высотой резервирует нижний отступ надёжно во всех браузерах. */
+.team-modal-body::after { content: ''; flex: 0 0 auto; height: clamp(28px, 3.4vw, 40px); }
 .team-modal-eyebrow { margin-bottom: .4rem; }
 .team-modal-name {
   font-family: var(--serif); font-weight: 400; line-height: 1.05; color: var(--ink);
@@ -862,7 +866,8 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   .team-modal-dialog { grid-template-columns: 1fr; width: 92%; max-height: 90vh; overflow-y: auto; }
   .team-modal-photo { aspect-ratio: 4 / 3; min-height: 0; }
   .team-modal-photo--placeholder { aspect-ratio: 4 / 3; }
-  .team-modal-body { padding: clamp(24px, 6vw, 32px); }
+  .team-modal-body { padding: clamp(24px, 6vw, 32px) clamp(24px, 6vw, 32px) 0; }
+  .team-modal-body::after { height: clamp(24px, 6vw, 32px); }
   .team-modal-cta { width: 100%; max-width: none; justify-content: center; }
 
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
