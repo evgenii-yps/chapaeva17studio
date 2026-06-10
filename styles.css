@@ -487,7 +487,9 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   border: 1px solid var(--line); border-radius: 100px; padding: .4em 1em;
   background: var(--cream-warm);
 }
-.team-modal-bio { margin: 0 0 1.8em; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.6; color: var(--ink-soft); }
+.team-modal-bio { margin: 0 0 2em; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.65; color: var(--ink-soft); }
+.team-modal-bio p { margin: 0; }
+.team-modal-bio p + p { margin-top: 1.1em; }
 .team-modal-cta { margin-top: auto; }
 .team-modal-close {
   position: absolute; top: 12px; right: 14px; z-index: 2;
