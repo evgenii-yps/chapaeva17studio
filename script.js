@@ -18,6 +18,12 @@
     });
   }
   function $(id) { return document.getElementById(id); }
+  /* bio может быть строкой или массивом абзацев — нормализуем в массив непустых строк */
+  function bioParagraphs(bio) {
+    return (Array.isArray(bio) ? bio : [bio]).filter(function (p) {
+      return p != null && String(p).trim() !== '';
+    });
+  }
 
   /* ---------- year ---------- */
   var yearEl = $('year');
@@ -288,7 +294,9 @@
       var back = el('div', 'team-card-back');
       var backInner = el('div');
       backInner.appendChild(el('p', 'team-card-name', esc(t.name)));
-      backInner.appendChild(el('p', null, esc(t.bio)));
+      bioParagraphs(t.bio).forEach(function (p) {
+        backInner.appendChild(el('p', null, esc(p)));
+      });
       back.appendChild(backInner);
       card.appendChild(back);
 
@@ -365,7 +373,11 @@
       if (label) chips.appendChild(el('li', 'team-modal-chip', esc(label)));
     });
 
-    $('team-modal-bio').textContent = t.bio || '';
+    var bioEl = $('team-modal-bio');
+    bioEl.innerHTML = '';
+    bioParagraphs(t.bio).forEach(function (p) {
+      bioEl.appendChild(el('p', null, esc(p)));
+    });
 
     var cta = $('team-modal-cta');
     var direction = matchDirection(t.role);
