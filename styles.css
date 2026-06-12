@@ -406,7 +406,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
    КОМАНДА
    ============================================================ */
 .team { background: var(--cream); }
-.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 2vw, 24px); }
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px, 2vw, 24px); max-width: 600px; margin-inline: auto; }
 .team-card {
   position: relative; border-radius: var(--radius); overflow: hidden;
   aspect-ratio: 3 / 4; box-shadow: var(--soft-shadow);
@@ -447,6 +447,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 }
 
 .troupe { text-align: center; color: var(--ink-soft); font-size: 14px; margin: clamp(36px,5vw,56px) auto 0; max-width: 760px; }
+.troupe:empty { display: none; }
 
 /* ---------- модалка тренера ---------- */
 .team-modal { position: fixed; inset: 0; z-index: 210; display: grid; place-items: center; padding: clamp(16px, 4vw, 48px); }
@@ -458,8 +459,8 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
 .team-modal.is-open .team-modal-backdrop { opacity: 1; }
 .team-modal-dialog {
   position: relative; z-index: 1;
-  display: grid; grid-template-columns: minmax(0, 40%) 1fr;
-  width: min(880px, 100%); max-height: 88vh; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 38%) 1fr;
+  width: min(1040px, 100%); max-height: 88vh; overflow: hidden;
   background: var(--cream); border-radius: var(--radius);
   box-shadow: 0 40px 100px rgba(0, 0, 0, .45);
   opacity: 0; transform: scale(.94); transition: opacity .22s ease, transform .22s ease;
@@ -492,7 +493,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
   border: 1px solid var(--line); border-radius: 100px; padding: .4em 1em;
   background: var(--cream-warm);
 }
-.team-modal-bio { margin: 0 0 2.25rem; max-width: 62ch; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.65; color: var(--ink-soft); }
+.team-modal-bio { margin: 0 0 2.25rem; max-width: 70ch; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.65; color: var(--ink-soft); }
 .team-modal-bio p { margin: 0; }
 .team-modal-bio p + p { margin-top: .9em; }
 .team-modal-cta { padding: 1.1em 2.2em; }
