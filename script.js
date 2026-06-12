@@ -380,7 +380,7 @@
     });
 
     var cta = $('team-modal-cta');
-    var direction = matchDirection(t.role);
+    var direction = t.bookingDirection || matchDirection(t.role);
     cta.onclick = function () {
       var sel = $('f-direction');
       if (sel && direction) sel.value = direction;

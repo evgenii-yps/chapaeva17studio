@@ -406,7 +406,7 @@ main > section[id], #pricing, .section-anchor { scroll-margin-top: 132px; }
    КОМАНДА
    ============================================================ */
 .team { background: var(--cream); }
-.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(16px, 2vw, 24px); max-width: 600px; margin-inline: auto; }
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 24px); max-width: 900px; margin-inline: auto; }
 .team-card {
   position: relative; border-radius: var(--radius); overflow: hidden;
   aspect-ratio: 3 / 4; box-shadow: var(--soft-shadow);
