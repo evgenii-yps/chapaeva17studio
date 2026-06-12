@@ -155,7 +155,9 @@ window.CH17_DATA = (function () {
       bio: [
         'Чемпион мира по ушу. Работает на стыке восточных практик и пилатеса — точное движение, контроль дыхания, функциональный тренинг.'
       ],
-      initials: 'ЮЛ'
+      initials: 'ЮЛ',
+      photoWebp: '/public/images/team/yuri-lapshin.webp',
+      photoJpg: '/public/images/team/yuri-lapshin.jpg'
     },
     {
       id: 'maria-gustinovich',
