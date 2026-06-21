@@ -61,65 +61,74 @@ window.CH17_DATA = (function () {
       id: 'pilates-equipment',
       num: '01',
       name: 'Пилатес на оборудовании',
-      rangeFrom: 1700,
+      rangeFrom: 1800,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
-    },
-    {
-      id: 'pilates-mat',
-      num: '02',
-      name: 'Пилатес на матах',
-      rangeFrom: 1000,
-      longDescription: STUB_LONG,
-      image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
+      priceNote: null,
+      prices: [
+        { format: 'Индивидуальное', price: '5 000 ₽' },
+        { format: 'Сплит (вдвоём)', price: '2 500 ₽', per: 'за человека' },
+        { format: 'Групповое', price: '1 800 ₽', per: 'за человека' }
+      ]
     },
     {
       id: 'choreography',
-      num: '03',
+      num: '02',
       name: 'Хореография',
-      rangeFrom: 1150,
+      rangeFrom: 1800,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
+      priceNote: null,
+      prices: [
+        { format: 'Индивидуальное', price: '5 000 ₽' },
+        { format: 'Сплит (вдвоём)', price: '2 500 ₽', per: 'за человека' },
+        { format: 'Групповое', price: '1 800 ₽', per: 'за человека' }
+      ]
     },
     {
       id: 'yoga',
-      num: '04',
+      num: '03',
       name: 'Йога',
-      rangeFrom: 925,
+      rangeFrom: 1500,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
+      priceNote: null,
+      prices: [
+        { format: 'Индивидуальное', price: '4 000 ₽' },
+        { format: 'Сплит (вдвоём)', price: '2 000 ₽', per: 'за человека' },
+        { format: 'Групповое', price: '1 500 ₽', per: 'за человека' }
+      ]
     },
     {
       id: 'stretching',
-      num: '05',
+      num: '04',
       name: 'Растяжка',
-      rangeFrom: 925,
+      rangeFrom: 1500,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
+      priceNote: null,
+      prices: [
+        { format: 'Индивидуальное', price: '4 000 ₽' },
+        { format: 'Сплит (вдвоём)', price: '2 000 ₽', per: 'за человека' },
+        { format: 'Групповое', price: '1 500 ₽', per: 'за человека' }
+      ]
     },
     {
       id: 'massage',
-      num: '06',
+      num: '05',
       name: 'Массаж и восстановление',
-      rangeFrom: 4300,
+      rangeFrom: 4500,
+      fixed: true,
       longDescription: STUB_LONG,
       image: null,
-      priceNote: { value: 'Индивидуально' },
-      prices: null
+      priceNote: null,
+      prices: [
+        { format: 'Индивидуальное', price: '4 500 ₽' }
+      ]
     },
     {
       id: 'ballet-intensive',
-      num: '07',
+      num: '06',
       name: 'Балетный интенсив',
       rangeFrom: 30000,
       longDescription: 'Лето с «Ч17» — не просто каникулы, а живая работа с телом. Пилатес и хореография в тандеме творят чудеса: мы выходим за пределы привычных движений и учимся видеть возможности своего тела в пространстве.\n\nНад чем работаем: замечать детали, выстраивать баланс, убирать зажимы, улучшать физическую форму.\n\nЗаниматься с вами будут люди, для которых движение — профессия: артисты балета с педагогическим образованием, спортивные тренеры, тренеры по пилатесу. В уютном пространстве на Петроградке, в атмосфере заботы и спокойствия, занимаемся тонкой настройкой организма — ради хорошего самочувствия и качества жизни.',

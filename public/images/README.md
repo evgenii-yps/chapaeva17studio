@@ -35,7 +35,7 @@
 - `pink-fabric-arch.jpg` — розовая ткань у античной арки
 - `red-jump-rocks.jpg` — прыжок в красном на скалах
 
-> Папки `directions/pilates-equipment`, `pilates-mat`, `yoga`, `stretching`, `massage` пока пустые (.gitkeep).
+> Папки `directions/pilates-equipment`, `yoga`, `stretching`, `massage` пока пустые (.gitkeep).
 
 ## team/olesya-stage/ — сценические фото Олеси Гапиенко
 - `olesya-swan-solo-1.jpg` — сольная в «Лебедином», белая пачка, корона из перьев
@@ -85,8 +85,6 @@
 - `card-direction-choreography-short.png` — Хореография: дети и взрослые
 - `card-direction-pilates-equipment-full.png` — Пилатес на оборудовании (большая)
 - `card-direction-pilates-equipment-short.png` — Пилатес на оборудовании Legacy
-- `card-direction-pilates-mat-full.png` — Пилатес на матах (большая)
-- `card-direction-pilates-mat-short.png` — Пилатес на матах (с растением и чашами)
 - `card-direction-stretching-full.png` — Растяжка (большая)
 - `card-direction-stretching-short.png` — Растяжка на всё тело
 - `card-direction-yoga-full.png` — Йога (большая)

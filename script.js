@@ -757,7 +757,10 @@
       var fc = el('div', 'format-card');
       fc.appendChild(el('span', 'format-name', esc(p.format)));
       var isTbd = !p.price || String(p.price).toLowerCase() === 'tbd';
-      fc.appendChild(el('span', 'format-price' + (isTbd ? ' format-price--tbd' : ''), isTbd ? 'tbd' : esc(p.price)));
+      var priceWrap = el('div', 'format-price-wrap');
+      priceWrap.appendChild(el('span', 'format-price' + (isTbd ? ' format-price--tbd' : ''), isTbd ? 'tbd' : esc(p.price)));
+      if (!isTbd && p.per) priceWrap.appendChild(el('span', 'format-per', esc(p.per)));
+      fc.appendChild(priceWrap);
       grid.appendChild(fc);
     });
     return grid;
