@@ -23,3 +23,6 @@ output/*.mp4
 work/scene/_tmp_logs/
 work/scene/_tmp_frames/
 work/scene/*.mp4
+work/render*_start.txt
+work/scene/_render*.log
+work/scene/_tmp_frames_front/
