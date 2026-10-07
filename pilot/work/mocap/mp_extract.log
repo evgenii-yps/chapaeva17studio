@@ -1,0 +1,15 @@
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+WARNING: Logging before InitGoogle() is written to STDERR
+W0000 00:00:1791334591.091869    1170 inference_feedback_manager.cc:121] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1791334591.163668    1170 inference_feedback_manager.cc:121] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1791334591.267408    1171 landmark_projection_calculator.cc:81] Using NORM_RECT without IMAGE_DIMENSIONS is only supported for the square ROI. Provide IMAGE_DIMENSIONS or use PROJECTION_MATRIX.
+0 1665 0s
+200 1665 12s
+400 1665 24s
+600 1665 36s
+800 1665 48s
+1000 1665 60s
+1200 1665 71s
+1400 1665 84s
+1600 1665 95s
+done 1.0 100s
