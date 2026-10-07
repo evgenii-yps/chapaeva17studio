@@ -17,6 +17,16 @@ W, IMG, FPS = d['world'], d['img'], float(d['fps'])
 N = len(W)
 dt = 1.0 / FPS
 
+# ---------- 00. артефакт исходника: первые кадры повёрнуты (склейка). Заменяем удержанием первой нормальной позы
+def _tilt(t):
+    sh = (IMG[t, 11, :2] + IMG[t, 12, :2]) / 2; hp = (IMG[t, 23, :2] + IMG[t, 24, :2]) / 2
+    v = sh - hp
+    return abs(np.degrees(np.arctan2(v[0], -v[1])))
+first_good = next((t for t in range(min(20, N)) if _tilt(t) < 8), 0)
+if first_good > 0:
+    W[:first_good] = W[first_good]; IMG[:first_good] = IMG[first_good]
+rotated_head_frames = first_good
+
 # ---------- 0. коррекция перепутанных лево/право (типичный сбой MediaPipe в профиль)
 PAIRS = [(11, 12), (13, 14), (15, 16), (23, 24), (25, 26), (27, 28), (31, 32), (29, 30), (7, 8), (19, 20), (17, 18), (21, 22), (1, 4), (2, 5), (3, 6), (9, 10)]
 swap_frames = []
@@ -344,7 +354,7 @@ metrics = dict(
     jitter_raw_m_per_frame2=raw_j, jitter_filtered_m_per_frame2=fil_j,
     jitter_reduction=float(1 - fil_j / raw_j),
     foot_slide_before_m_s=slide_before, foot_slide_after_m_s=slide_after,
-    low_conf_segments_s=segs, lr_swap_corrections_frames=swap_frames, m_per_img_unit=m_per_unit, bone_lengths_m={k: round(v, 3) for k, v in L.items()},
+    low_conf_segments_s=segs, source_rotated_head_frames_held=rotated_head_frames, lr_swap_corrections_frames=swap_frames, m_per_img_unit=m_per_unit, bone_lengths_m={k: round(v, 3) for k, v in L.items()},
     root_x_range_m=[float(root_x.min()), float(root_x.max())], root_z_range_m=[float(root_z.min()), float(root_z.max())],
 )
 json.dump(metrics, open(out + '_metrics.json', 'w'), indent=1, ensure_ascii=False)

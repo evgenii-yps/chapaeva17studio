@@ -49,7 +49,7 @@ def parse_args():
     p.add_argument('--focal', type=float, default=45.0, help='фокусное, мм (экв. 35 мм)')
     p.add_argument('--cam-height', type=float, default=1.25, help='высота камеры, м')
     p.add_argument('--margin', type=float, default=0.15, help='запас по краям кадра (доля)')
-    p.add_argument('--no-follow', action='store_true', help='(по умолчанию камера фиксирована)')
+    p.add_argument('--follow', type=float, default=0.6, help='доля плавного следования камеры за корнем (0 = фиксированная)')
     p.add_argument('--crf', type=int, default=18)
     return p.parse_args()
 
@@ -257,6 +257,19 @@ REQUIRED = ['Hips', 'Spine', 'Chest', 'Neck', 'Head', 'LeftUpperArm', 'LeftLower
             'LeftToe', 'RightUpperLeg', 'RightLowerLeg', 'RightFoot', 'RightToe']
 
 
+def action_fcurves(act):
+    try:
+        return list(act.fcurves)           # Blender <= 4.x
+    except AttributeError:
+        return [fc for lay in act.layers for st in lay.strips for cb in st.channelbags for fc in cb.fcurves]
+
+
+def bvh_frame_count(arm):
+    """Число кадров BVH по ключам анимации (кадры 1..N)."""
+    fcs = action_fcurves(arm.animation_data.action)
+    return int(max(fc.keyframe_points[-1].co.x for fc in fcs))
+
+
 def rest_joints(arm):
     """Позиции суставов в покое в мировых координатах: head кости; для листьев ещё tail (End Site)."""
     mw = arm.matrix_world
@@ -429,7 +442,7 @@ def build_studio():
     box('BaseboardLeft_b', (x_left + 0.012, (wy1 + y_front) / 2, 0.05), (0.024, y_front - wy1, 0.10), trim)
     # реечная панель на задней стене (премиум-акцент)
     n_slat = 36
-    x0, x1 = -2.2, 3.3
+    x0, x1 = -2.4, 1.6
     for i in range(n_slat):
         xx = x0 + (x1 - x0) * (i + 0.5) / n_slat
         box(f'Slat{i}', (xx, y_back + 0.03, 1.35), (0.075, 0.05, 2.3), slat_m)
@@ -437,7 +450,7 @@ def build_studio():
     la = bpy.data.lights.new('WindowLight', 'AREA')
     la.shape = 'RECTANGLE'
     la.size, la.size_y = 4.5, 2.6
-    la.energy = 1800
+    la.energy = 2500
     la.color = (1.0, 0.97, 0.93)
     lo = bpy.data.objects.new('WindowLight', la)
     lo.location = (x_left + 0.15, (wy0 + wy1) / 2, 1.55)
@@ -446,11 +459,11 @@ def build_studio():
     lf = bpy.data.lights.new('Fill', 'AREA')
     lf.shape = 'RECTANGLE'
     lf.size, lf.size_y = 5.0, 3.0
-    lf.energy = 500
+    lf.energy = 900
     lf.color = (0.93, 0.96, 1.0)
     lfo = bpy.data.objects.new('Fill', lf)
-    lfo.location = (5.5, 4.5, 2.6)
-    lfo.rotation_euler = Euler((math.radians(65), 0, math.radians(125)), 'XYZ')
+    lfo.location = (4.8, 3.6, 2.7)
+    lfo.rotation_euler = (Vector((0, -0.2, 1.0)) - lfo.location).to_track_quat('-Z', 'Y').to_euler()
     bpy.context.scene.collection.objects.link(lfo)
     # мир: мягкий светлый
     w = bpy.data.worlds.new('World')
@@ -462,24 +475,43 @@ def build_studio():
 
 
 # --------------------------------------------------------------------------- рамка кадра/камера
-def sample_bbox(arm, f0, f1, step):
+def sample_motion(arm, f0, f1, step):
+    """Для выборки кадров: [(frame, hips_world, [точки суставов])]."""
     sc = bpy.context.scene
     mw = arm.matrix_world
-    pts = []
+    out = []
     f = f0
     names = [b.name for b in arm.pose.bones]
     while f <= f1:
         sc.frame_set(f)
+        pts = []
         for n in names:
             pb = arm.pose.bones[n]
             pts.append(mw @ pb.head)
             pts.append(mw @ pb.tail)
+        out.append((f, mw @ arm.pose.bones['Hips'].head, pts))
         f += step
     sc.frame_set(f0)
-    return pts
+    return out
 
 
-def setup_camera(pts, az_deg, focal, cam_h, width, height, margin):
+def gauss_smooth(vals, sigma):
+    if sigma <= 0 or len(vals) < 3:
+        return list(vals)
+    rad = int(3 * sigma) + 1
+    w = [math.exp(-0.5 * (i / sigma) ** 2) for i in range(-rad, rad + 1)]
+    out = []
+    for i in range(len(vals)):
+        acc = tot = 0.0
+        for j, wj in zip(range(i - rad, i + rad + 1), w):
+            jj = min(max(j, 0), len(vals) - 1)
+            acc += vals[jj] * wj
+            tot += wj
+        out.append(acc / tot)
+    return out
+
+
+def setup_camera(motion, az_deg, focal, cam_h, width, height, margin, follow, sample_step, fps):
     sc = bpy.context.scene
     cam_d = bpy.data.cameras.new('Camera')
     cam_d.lens = focal
@@ -491,16 +523,19 @@ def setup_camera(pts, az_deg, focal, cam_h, width, height, margin):
     sc.collection.objects.link(cam)
     sc.camera = cam
     az = math.radians(az_deg)
-    # камера со стороны +X (мировая): персонаж смотрит в +Y; фронт-вид = камера на +Y.
-    # азимут от фронтального вида в сторону -X (где окно): свет окна падает сбоку-спереди.
-    az = -az
-    # горизонтальный взгляд (pitch=0, вертикали не заваливаются), кадрирование — lens shift
-    fwd_dir = Vector((-math.sin(az), -math.cos(az), 0))   # направление взгляда камеры
+    # камера на мировой +X (персонаж смотрит в +Y): окно в левой стене x<0 остаётся в кадре справа-вдали.
+    # Горизонтальный взгляд (pitch=0, вертикали не заваливаются), кадрирование — lens shift.
+    fwd_dir = Vector((-math.sin(az), -math.cos(az), 0))
     right = fwd_dir.cross(Vector((0, 0, 1))).normalized()
     cam.rotation_euler = Matrix((right, Vector((0, 0, 1)), -fwd_dir)).transposed().to_euler()
-    ctr = Vector((sum(p.x for p in pts) / len(pts), sum(p.y for p in pts) / len(pts), 0))
-    ctr.x = (min(p.x for p in pts) + max(p.x for p in pts)) / 2
-    ctr.y = (min(p.y for p in pts) + max(p.y for p in pts)) / 2
+    allp = [p for _, _, pts in motion for p in pts]
+    ctr = Vector(((min(p.x for p in allp) + max(p.x for p in allp)) / 2,
+                  (min(p.y for p in allp) + max(p.y for p in allp)) / 2, 0))
+    # плавное следование за корнем вдоль «правого» вектора камеры (доля follow, сглаживание ~1.2 с)
+    lat = [h.dot(right) for _, h, _ in motion]
+    lat_s = gauss_smooth(lat, 1.2 * fps / sample_step)
+    mean_lat = sum(lat) / len(lat)
+    offs = [follow * (v - mean_lat) for v in lat_s]
     aspect = height / width
     half = 18.0 / focal    # tan(hfov/2)
 
@@ -508,17 +543,18 @@ def setup_camera(pts, az_deg, focal, cam_h, width, height, margin):
         pos = ctr - fwd_dir * dist
         pos.z = cam_h
         us, vs = [], []
-        for p in pts:
-            d = p - pos
-            depth = d.dot(fwd_dir)
-            if depth < 0.2:
-                return None
-            us.append(d.dot(right) / depth / half)
-            vs.append(d.z / depth / half)
+        for (_, _, pts), off in zip(motion, offs):
+            for p in pts:
+                d = p - pos
+                depth = d.dot(fwd_dir)
+                if depth < 0.2:
+                    return None
+                us.append((d.dot(right) - off) / depth / half)
+                vs.append(d.z / depth / half)
         return pos, min(us), max(us), min(vs), max(vs)
 
     lo_d, hi_d = 1.0, 40.0
-    for _ in range(40):
+    for _ in range(30):
         mid = (lo_d + hi_d) / 2
         r = fit(mid)
         ok = False
@@ -533,6 +569,14 @@ def setup_camera(pts, az_deg, focal, cam_h, width, height, margin):
     cam.location = pos
     cam_d.shift_x = (u0 + u1) / 2 / 2
     cam_d.shift_y = (v0 + v1) / 2 / 2
+    if follow > 0:
+        for (f, _, _), off in zip(motion, offs):
+            cam.location = pos + right * off
+            cam.keyframe_insert('location', frame=f)
+        cam.location = pos
+        for fc in action_fcurves(cam.animation_data.action):
+            for kp in fc.keyframe_points:
+                kp.interpolation = 'LINEAR'
     return cam, hi_d
 
 
@@ -601,7 +645,7 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     sc = bpy.context.scene
     arm = import_bvh(os.path.abspath(args.bvh))
-    n_frames = int(sc.frame_end)            # импортёр: 1..N
+    n_frames = bvh_frame_count(arm)         # импортёр: ключи на кадрах 1..N
     f_first = args.frame_start if args.frame_start is not None else 0
     f_last = args.frame_end if args.frame_end is not None else n_frames - 1
     f_last = min(f_last, n_frames - 1)
@@ -612,11 +656,14 @@ def main():
     build_mannequin(arm)
     build_studio()
     # рамка по ВСЕМУ движению (а не только по рендеримому диапазону), чтобы кадр не прыгал
-    pts = sample_bbox(arm, 1, n_frames, max(1, n_frames // 150))
-    cam, dist = setup_camera(pts, args.azimuth, args.focal, args.cam_height, args.width, args.height, args.margin)
+    sstep = max(1, n_frames // 300)
+    motion = sample_motion(arm, 1, n_frames, sstep)
+    cam, dist = setup_camera(motion, args.azimuth, args.focal, args.cam_height, args.width, args.height, args.margin,
+                             args.follow, sstep, args.fps)
+    pts = [p for _, _, ps in motion for p in ps]
     xs = [p.x for p in pts]; ys = [p.y for p in pts]; zs = [p.z for p in pts]
     print(f'bbox движения (Blender, м): x[{min(xs):.2f},{max(xs):.2f}] y[{min(ys):.2f},{max(ys):.2f}] '
-          f'z[{min(zs):.2f},{max(zs):.2f}]; камера на расстоянии {dist:.2f} м')
+          f'z[{min(zs):.2f},{max(zs):.2f}]; камера на расстоянии {dist:.2f} м, follow={args.follow}')
     setup_render(args)
 
     if args.save_blend:
@@ -656,7 +703,7 @@ def main():
             bpy.ops.render.render(write_still=True)
             os.replace(path + '.part.png', path)
             done += 1
-            if done % 10 == 0 or done == 1:
+            if done % 10 == 0 or done <= 3:
                 el = time.time() - t0
                 left = (len(todo) - skipped - done) * el / done
                 print(f'[{pk}/{pn}] {done + skipped}/{len(todo)}  {el / done:.2f} с/кадр, осталось ~{left / 60:.1f} мин', flush=True)
