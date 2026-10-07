@@ -46,10 +46,12 @@ def parse_args():
                    '(для запуска нескольких процессов параллельно; сборку mp4 делайте --assemble-only)')
     p.add_argument('--assemble-only', action='store_true', help='только собрать mp4 из имеющихся PNG')
     p.add_argument('--azimuth', type=float, default=35.0, help='азимут камеры от фронтального вида, градусы')
-    p.add_argument('--focal', type=float, default=45.0, help='фокусное, мм (экв. 35 мм)')
+    p.add_argument('--focal', type=float, default=50.0, help='фокусное, мм (экв. 35 мм)')
     p.add_argument('--cam-height', type=float, default=1.25, help='высота камеры, м')
-    p.add_argument('--margin', type=float, default=0.15, help='запас по краям кадра (доля)')
-    p.add_argument('--follow', type=float, default=0.6, help='доля плавного следования камеры за корнем (0 = фиксированная)')
+    p.add_argument('--margin', type=float, default=0.10, help='запас по краям кадра (доля)')
+    p.add_argument('--follow', type=float, default=0.7, help='доля плавного следования камеры за корнем (0 = фиксированная)')
+    p.add_argument('--quality', default='fast', choices=['fast', 'balanced'],
+                   help='fast: EEVEE без теневых карт + мягкие «пятна-тени» под ногами; balanced: настоящие тени (в ~2 раза медленнее)')
     p.add_argument('--crf', type=int, default=18)
     return p.parse_args()
 
@@ -300,9 +302,9 @@ def build_mannequin(arm):
     # масштаб тела от длины ног/плеч
     hip_w = abs(J['LeftUpperLeg'].x - J['RightUpperLeg'].x)           # расстояние между тазобедренными
     sh_w = abs(J['LeftUpperArm'].x - J['RightUpperArm'].x)            # между плечевыми
-    leg_len = J['Hips'].z - J['LeftFoot'].z
-    k = leg_len / 0.89                                                  # относительно «эталона» 0.89 м
-    k = max(0.7, min(1.4, k))
+    sole_z = min(min(J[s + 'Toe'].z, T[s + 'Toe'].z) for s in ('Left', 'Right'))   # подошва в позе покоя
+    total_h = T['Head'].z - sole_z
+    k = max(0.7, min(1.4, total_h / 1.77))                              # масштаб деталей относительно рост 1.77 м
     R = lambda v: v * k  # noqa: E731
 
     n = 20
@@ -314,8 +316,8 @@ def build_mannequin(arm):
     mb.capsule(spine, chest, (hip_w * 0.62, R(0.095)), (sh_w * 0.50, R(0.105)), 'Spine', SUIT, side=X, n=n, cap=4,
                ext0=R(0.06), ext1=R(0.04))
     # пояс на талии
-    mb.capsule(spine + Vector((0, 0, R(0.015))), spine + Vector((0, 0, R(0.055))), (hip_w * 0.64, R(0.098)),
-               (hip_w * 0.64, R(0.098)), 'Spine', SASH, side=X, n=n, cap=1, ext0=R(0.004), ext1=R(0.004))
+    mb.capsule(spine + Vector((0, 0, R(0.015))), spine + Vector((0, 0, R(0.055))), (max(hip_w * 0.62, sh_w * 0.5) * 1.12, R(0.118)),
+               (max(hip_w * 0.62, sh_w * 0.5) * 1.12, R(0.118)), 'Spine', SASH, side=X, n=n, cap=1, ext0=R(0.004), ext1=R(0.004))
     # грудная клетка: от Chest до шеи, шире в плечах
     cc = (chest + neck) / 2 + Vector((0, 0, R(0.02)))
     mb.ellipsoid(cc, Z, (((neck - chest).length) * 0.72, sh_w * 0.58, R(0.115)), 'Chest', SUIT, n=24, cap=8)
@@ -357,8 +359,6 @@ def build_mannequin(arm):
                      side=X, n=12, cap=5)
 
     # --- ноги и стопы
-    sole_z = min(min(J[s + 'Toe'].z, T[s + 'Toe'].z, J[s + 'Foot'].z) for s in ('Left', 'Right'))
-    sole_z = min(sole_z, 0.0) if False else 0.0   # ступни стоят на Y=0 (BVH) = Z=0 (Blender)
     for s in ('Left', 'Right'):
         ul, ll, ft, to = J[s + 'UpperLeg'], J[s + 'LowerLeg'], J[s + 'Foot'], J[s + 'Toe']
         tend = T[s + 'Toe']
@@ -370,11 +370,12 @@ def build_mannequin(arm):
                    ext1=0)
         mb.ellipsoid(ft, Z, (R(0.042), R(0.042), R(0.042)), s + 'Foot', SUIT, n=16, cap=6)           # щиколотка
         # стопа: капсула вдоль подошвы
-        rf = max(0.03, min(0.05, ft.z * 0.5))
-        heel = Vector((ft.x, ft.y - R(0.02), rf))
-        ball = Vector((to.x, to.y, rf * 0.9))
+        rf = max(0.025, min(0.045, (ft.z - sole_z) * 0.55))
+        zc = sole_z + rf
+        heel = Vector((ft.x, ft.y - R(0.02), zc))
+        ball = Vector((to.x, to.y, sole_z + rf * 0.9))
         mb.capsule(heel, ball, (rf * 1.15, rf), (rf * 1.2, rf * 0.9), s + 'Foot', SHOE, side=X, n=18, cap=5)
-        tip = Vector((tend.x, tend.y, rf * 0.8))
+        tip = Vector((tend.x, tend.y, sole_z + rf * 0.8))
         mb.capsule(ball, tip, (rf * 1.2, rf * 0.9), (rf * 1.0, rf * 0.75), s + 'Toe', SHOE, side=X, n=18, cap=5)
 
     ob = mb.build('Mannequin', [b.name for b in arm.data.bones], mats)
@@ -386,19 +387,29 @@ def build_mannequin(arm):
 
 
 # --------------------------------------------------------------------------- студия
-def box(name, loc, size, mat, collection=None):
-    me = bpy.data.meshes.new(name)
+_STATIC = {}   # материал -> (verts, faces): статическая геометрия студии склеивается по материалам (меньше draw call'ов)
+
+
+def box(name, loc, size, mat):
     sx, sy, sz = (s / 2 for s in size)
     vs = [(-sx, -sy, -sz), (sx, -sy, -sz), (sx, sy, -sz), (-sx, sy, -sz),
           (-sx, -sy, sz), (sx, -sy, sz), (sx, sy, sz), (-sx, sy, sz)]
     fs = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
-    me.from_pydata(vs, [], fs)
-    me.update()
-    me.materials.append(mat)
-    ob = bpy.data.objects.new(name, me)
-    ob.location = loc
-    bpy.context.scene.collection.objects.link(ob)
-    return ob
+    V, F = _STATIC.setdefault(mat.name, (mat, [], []))[1:]
+    base = len(V)
+    V.extend((x + loc[0], y + loc[1], z + loc[2]) for x, y, z in vs)
+    F.extend(tuple(base + i for i in f) for f in fs)
+
+
+def flush_static():
+    for mat, V, F in _STATIC.values():
+        me = bpy.data.meshes.new('Studio_' + mat.name)
+        me.from_pydata(V, [], F)
+        me.update()
+        me.materials.append(mat)
+        ob = bpy.data.objects.new('Studio_' + mat.name, me)
+        bpy.context.scene.collection.objects.link(ob)
+    _STATIC.clear()
 
 
 def build_studio():
@@ -413,7 +424,7 @@ def build_studio():
     y_back, y_front = -3.2, 9.0
     x_left, x_right = -4.3, 8.0
     # пол
-    floor = box('Floor', ((x_left + x_right) / 2, (y_back + y_front) / 2, -0.05),
+    box('Floor', ((x_left + x_right) / 2, (y_back + y_front) / 2, -0.05),
                 (x_right - x_left, y_front - y_back, 0.1), floor_m)
     # задняя стена (за персонажем), потолок
     box('WallBack', ((x_left + x_right) / 2, y_back - 0.05, H / 2), (x_right - x_left, 0.1, H), wall)
@@ -434,8 +445,7 @@ def build_studio():
         box(f'Mullion{i}', (x_left + 0.01, yy, (sill + head_h) / 2), (0.05, 0.045, head_h - sill), trim)
     box('MullionH', (x_left + 0.01, (wy0 + wy1) / 2, (sill + head_h) / 2 + 0.55), (0.05, wy1 - wy0, 0.04), trim)
     # «небо» за окном
-    sk = box('Sky', (x_left - 1.2, (wy0 + wy1) / 2, 1.6), (0.05, 7.0, 4.5), sky)
-    sk.hide_render = False
+    box('Sky', (x_left - 1.2, (wy0 + wy1) / 2, 1.6), (0.05, 7.0, 4.5), sky)
     # плинтус
     box('BaseboardBack', ((x_left + x_right) / 2, y_back + 0.012, 0.05), (x_right - x_left, 0.024, 0.10), trim)
     box('BaseboardLeft_a', (x_left + 0.012, (y_back + wy0) / 2, 0.05), (0.024, wy0 - y_back, 0.10), trim)
@@ -446,6 +456,7 @@ def build_studio():
     for i in range(n_slat):
         xx = x0 + (x1 - x0) * (i + 0.5) / n_slat
         box(f'Slat{i}', (xx, y_back + 0.03, 1.35), (0.075, 0.05, 2.3), slat_m)
+    flush_static()
     # свет: большой area-свет в проёме окна + мягкий заполняющий
     la = bpy.data.lights.new('WindowLight', 'AREA')
     la.shape = 'RECTANGLE'
@@ -472,6 +483,72 @@ def build_studio():
     bg.inputs['Color'].default_value = (*srgb('#DCE6F2'), 1)
     bg.inputs['Strength'].default_value = 0.55
     bpy.context.scene.world = w
+
+
+# --------------------------------------------------------------------------- фейковые контактные тени
+def blob_material():
+    m = bpy.data.materials.new('BlobShadow')
+    m.use_nodes = True
+    nt = m.node_tree
+    for n in list(nt.nodes):
+        nt.nodes.remove(n)
+    tc = nt.nodes.new('ShaderNodeTexCoord')
+    grad = nt.nodes.new('ShaderNodeTexGradient')
+    grad.gradient_type = 'SPHERICAL'
+    mp = nt.nodes.new('ShaderNodeMapping')   # Generated 0..1 -> -1..1 вокруг центра
+    mp.inputs['Scale'].default_value = (2, 2, 2)
+    mp.inputs['Location'].default_value = (-1, -1, 0)
+    nt.links.new(tc.outputs['Generated'], mp.inputs['Vector'])
+    nt.links.new(mp.outputs['Vector'], grad.inputs['Vector'])
+    ramp = nt.nodes.new('ShaderNodeValToRGB')
+    ramp.color_ramp.elements[0].position = 0.0
+    ramp.color_ramp.elements[0].color = (0, 0, 0, 1)
+    ramp.color_ramp.elements[1].position = 1.0
+    ramp.color_ramp.elements[1].color = (1, 1, 1, 1)
+    ramp.color_ramp.interpolation = 'EASE'
+    nt.links.new(grad.outputs['Fac'], ramp.inputs['Fac'])
+    tr = nt.nodes.new('ShaderNodeBsdfTransparent')
+    dk = nt.nodes.new('ShaderNodeEmission')
+    dk.inputs['Color'].default_value = (0.02, 0.012, 0.008, 1)
+    dk.inputs['Strength'].default_value = 1.0
+    mix = nt.nodes.new('ShaderNodeMixShader')
+    # Fac = непрозрачность * интенсивность
+    mul = nt.nodes.new('ShaderNodeMath')
+    mul.operation = 'MULTIPLY'
+    mul.inputs[1].default_value = 0.6
+    nt.links.new(ramp.outputs['Color'], mul.inputs[0])
+    nt.links.new(mul.outputs[0], mix.inputs['Fac'])
+    nt.links.new(tr.outputs[0], mix.inputs[1])
+    nt.links.new(dk.outputs[0], mix.inputs[2])
+    out = nt.nodes.new('ShaderNodeOutputMaterial')
+    nt.links.new(mix.outputs[0], out.inputs[0])
+    try:
+        m.surface_render_method = 'BLENDED'
+    except Exception:
+        pass
+    m.use_backface_culling = False
+    return m
+
+
+def add_blob_shadows(arm):
+    """Мягкие тёмные пятна на полу под тазом и стопами, следуют за костями (Copy Location по X/Y)."""
+    mat = blob_material()
+    spec = [('Hips', 'head', 0.55, 0.32), ('LeftFoot', 'head', 0.26, 0.5), ('RightFoot', 'head', 0.26, 0.5),
+            ('LeftToe', 'head', 0.2, 0.5), ('RightToe', 'head', 0.2, 0.5)]
+    for bone, _, size, _k in spec:
+        me = bpy.data.meshes.new('Blob_' + bone)
+        h = size
+        me.from_pydata([(-h, -h, 0), (h, -h, 0), (h, h, 0), (-h, h, 0)], [], [(0, 1, 2, 3)])
+        me.uv_layers.new(name='UV')
+        me.materials.append(mat)
+        ob = bpy.data.objects.new('Blob_' + bone, me)
+        ob.location = (0, 0, 0.004)
+        bpy.context.scene.collection.objects.link(ob)
+        c = ob.constraints.new('COPY_LOCATION')
+        c.target = arm
+        c.subtarget = bone
+        c.use_z = False
+        ob.visible_shadow = False
 
 
 # --------------------------------------------------------------------------- рамка кадра/камера
@@ -599,8 +676,8 @@ def setup_render(args):
     if args.engine == 'EEVEE':
         r.engine = 'BLENDER_EEVEE'
         e = sc.eevee
-        e.taa_render_samples = args.samples or 16
-        e.use_shadows = True
+        e.taa_render_samples = args.samples or 4
+        e.use_shadows = args.quality != 'fast'
         e.use_raytracing = False
         e.use_fast_gi = False if hasattr(e, 'use_fast_gi') else None
         e.shadow_ray_count = 1
@@ -619,7 +696,7 @@ def setup_render(args):
     else:
         r.engine = 'CYCLES'
         sc.cycles.device = 'CPU'
-        sc.cycles.samples = args.samples or 16
+        sc.cycles.samples = args.samples or 4
         sc.cycles.use_denoising = True
         sc.cycles.max_bounces = 4
         sc.cycles.use_adaptive_sampling = True
@@ -635,7 +712,7 @@ def run_ffmpeg(frames_dir, frame_ids, out, fps, step, crf):
             fh.write(f"file 'f_{i:06d}.png'\nduration {dur:.6f}\n")
         fh.write(f"file 'f_{frame_ids[-1]:06d}.png'\n")
     cmd = ['ffmpeg', '-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', lst, '-vf', f'fps={fps},format=yuv420p',
-           '-c:v', 'libx264', '-crf', str(crf), '-preset', 'medium', '-movflags', '+faststart', '-an', out]
+           '-frames:v', str(len(frame_ids) * step), '-c:v', 'libx264', '-crf', str(crf), '-preset', 'medium', '-movflags', '+faststart', '-an', out]
     subprocess.check_call(cmd)
 
 
@@ -655,6 +732,8 @@ def main():
 
     build_mannequin(arm)
     build_studio()
+    if args.engine == 'EEVEE' and args.quality == 'fast':
+        add_blob_shadows(arm)
     # рамка по ВСЕМУ движению (а не только по рендеримому диапазону), чтобы кадр не прыгал
     sstep = max(1, n_frames // 300)
     motion = sample_motion(arm, 1, n_frames, sstep)
