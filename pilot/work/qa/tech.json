@@ -1,0 +1,22 @@
+{
+ "pilot_lesson.mp4": {
+  "size": "1280x720",
+  "fps": "30/1",
+  "video_dur": 55.5,
+  "audio_dur": 55.495011,
+  "av_start_offset": 0.0,
+  "black_segments": 0
+ },
+ "comparison_split.mp4": {
+  "size": "1998x720",
+  "fps": "30/1",
+  "video_dur": 55.5,
+  "audio_dur": 55.495011,
+  "av_start_offset": 0.0,
+  "black_segments": 0
+ },
+ "source_audio_dur": 55.5,
+ "character_detect_rate_on_render": 0.9963963963963964,
+ "character_all_key_joints_inside_frame_ratio": 1.0,
+ "frames_with_joint_near_border": 0
+}
