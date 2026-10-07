@@ -1,0 +1,16 @@
+/home/user/chapaeva17studio/pilot/work/scene/build_scene.py:168: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/home/user/chapaeva17studio/pilot/work/scene/build_scene.py:186: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/home/user/chapaeva17studio/pilot/work/scene/build_scene.py:235: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+/home/user/chapaeva17studio/pilot/work/scene/build_scene.py:481: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+/home/user/chapaeva17studio/pilot/work/scene/build_scene.py:491: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+	parsing bvh '/home/user/chapaeva17studio/pilot/work/mocap/mocap_final.bvh'...0.0339
+	importing to blender...Done in 0.2422
+
+BVH: 1665 кадров, кости: 19
+bbox движения (Blender, м): x[-1.31,1.19] y[-0.47,0.81] z[-0.06,1.74]; камера на расстоянии 5.15 м, follow=0.7
+mp4: /home/user/chapaeva17studio/pilot/work/scene/character.mp4
