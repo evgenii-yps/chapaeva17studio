@@ -26,3 +26,5 @@ work/scene/*.mp4
 work/render*_start.txt
 work/scene/_render*.log
 work/scene/_tmp_frames_front/
+work/render*_done.txt
+work/scene/_render*.log
