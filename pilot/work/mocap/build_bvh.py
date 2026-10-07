@@ -252,46 +252,62 @@ low = foot_pts.min(1)
 root_y = -low + 0.0
 root_y = savgol_filter(root_y, 9, 2)
 
-# контакт: опорная стопа = более низкая из двух (по высоте носка/щиколотки)
+# контакт: стопа опорная, если её нижняя точка не выше FLOOR_TOL над самой низкой точкой стоп; гистерезис по времени
+FLOOR_TOL = 0.05
 yL = np.minimum(rel['LeftFoot'][:, 1], rel['LeftToe'][:, 1])
 yR = np.minimum(rel['RightFoot'][:, 1], rel['RightToe'][:, 1])
-stance_left = yL < yR
+ylow = np.minimum(yL, yR)
+plantL = (yL - ylow) < FLOOR_TOL
+plantR = (yR - ylow) < FLOOR_TOL
+def _close(m, k=3):  # убрать одиночные пропуски/всплески контакта
+    m = m.copy()
+    for _ in range(2):
+        mm = np.convolve(m.astype(float), np.ones(2 * k + 1) / (2 * k + 1), 'same') > 0.5
+        m = mm
+    return m
+plantL, plantR = _close(plantL), _close(plantR)
+stance_left = plantL & ~plantR  # для обратной совместимости метрик
 
-# root XZ: Z - из фиксации опорной стопы (интегрирование), X - из 2D положения таза в кадре (без дрейфа)
+# root XZ: фиксация опорных стоп (интегрирование смещений), затем комплементарная фильтрация X с положением таза в кадре
 cx = (IMG[:, 23, 0] + IMG[:, 24, 0]) / 2
 cx = one_euro(np.where(np.isnan(cx), np.nanmedian(cx), cx), FPS, 1.0, 0.3)
-# метров на норм.единицу: по длине торса в 2D (по кадрам с большим 2D-торсом, т.е. фронтальный вид)
 sh2 = (IMG[:, 11, :2] + IMG[:, 12, :2]) / 2
 hp2 = (IMG[:, 23, :2] + IMG[:, 24, :2]) / 2
-# кадр квадратный (1168x1170) -> масштаб по x и y одинаков
 len2 = np.linalg.norm(sh2 - hp2, axis=1)
 top = len2 > np.percentile(len2, 70)
 m_per_unit = float(np.median(np.linalg.norm((NK - H)[top], axis=1) / len2[top]))
-root_x = (cx - np.median(cx)) * m_per_unit
+img_x = (cx - np.median(cx)) * m_per_unit
 
-dz = np.zeros(N)
+dxz = np.zeros((N, 2))
 for i in range(1, N):
-    if stance_left[i] and stance_left[i - 1]:
-        dz[i] = -(rel['LeftFoot'][i, 2] - rel['LeftFoot'][i - 1, 2])
-    elif (not stance_left[i]) and (not stance_left[i - 1]):
-        dz[i] = -(rel['RightFoot'][i, 2] - rel['RightFoot'][i - 1, 2])
-root_z = np.cumsum(dz)
-# убрать линейный дрейф интегрирования
+    ds = []
+    for plant, k in ((plantL, 'LeftFoot'), (plantR, 'RightFoot')):
+        if plant[i] and plant[i - 1]:
+            ds.append(-(rel[k][i] - rel[k][i - 1])[[0, 2]])
+    if ds:
+        dxz[i] = np.mean(ds, axis=0)
+lock = np.cumsum(dxz, axis=0)
 tt = np.arange(N)
-root_z = root_z - np.polyval(np.polyfit(tt, root_z, 1), tt)
-root_z = savgol_filter(root_z, 15, 2)
+# Z: убрать линейный дрейф интегрирования
+root_z = lock[:, 1] - np.polyval(np.polyfit(tt, lock[:, 1], 1), tt)
+# X: низкие частоты — из изображения, высокие — из фиксации стоп (комплементарный фильтр)
+from scipy.signal import butter, filtfilt
+bb, aa = butter(2, 0.3 / (FPS / 2))
+root_x = filtfilt(bb, aa, img_x) + (lock[:, 0] - filtfilt(bb, aa, lock[:, 0]))
+root_z = savgol_filter(root_z, 9, 2)
+root_x = savgol_filter(root_x, 9, 2)
 
 root = np.stack([root_x, root_y, root_z], 1)
 pos = fk_positions(root)
 
 # ---------- 8. скольжение стоп: метрика (до/после фиксации root)
 def slide_metric(posd):
-    """средняя скорость опорной стопы в плоскости пола (м/с) - чем меньше, тем лучше."""
+    """средняя скорость опорных стоп в плоскости пола (м/с); чем меньше, тем лучше."""
     v = []
     for i in range(1, N):
-        k = 'LeftFoot' if stance_left[i] and stance_left[i - 1] else ('RightFoot' if (not stance_left[i]) and (not stance_left[i - 1]) else None)
-        if k:
-            v.append(np.linalg.norm((posd[k][i] - posd[k][i - 1])[[0, 2]]) * FPS)
+        for plant, k in ((plantL, 'LeftFoot'), (plantR, 'RightFoot')):
+            if plant[i] and plant[i - 1]:
+                v.append(np.linalg.norm((posd[k][i] - posd[k][i - 1])[[0, 2]]) * FPS)
     return float(np.mean(v))
 slide_after = slide_metric(pos)
 pos_noroot = fk_positions(np.stack([np.zeros(N), root_y, np.zeros(N)], 1))
@@ -330,6 +346,7 @@ with open(out + '.bvh', 'w') as f:
             row += list(eul[j][i])
         f.write(' '.join(f"{v:.4f}" for v in row) + '\n')
 
+np.savez_compressed(out + '_src_keypoints.npz', Pf=Pf, vis=VIS)
 np.savez_compressed(out + '_joints.npz', **{k: v for k, v in pos.items()}, root=root)
 
 # ---------- 10. метрики
