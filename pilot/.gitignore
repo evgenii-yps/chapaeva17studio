@@ -17,3 +17,9 @@ work/scene/_tmp*/
 *.onnx
 *.tflite
 __pycache__/
+
+# итоговые видео хранятся локально в output/, в git не попадают (по указанию заказчика)
+output/*.mp4
+work/scene/_tmp_logs/
+work/scene/_tmp_frames/
+work/scene/*.mp4
