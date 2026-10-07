@@ -45,6 +45,27 @@ N = min(len(next(iter(ref.values()))), len(next(iter(bvh.values()))))
 res = None
 if rend_npz:
     raw = np.load(rend_npz)['world'][:, :, :3].copy()
+    # оси как у эталона (y вверх, z к камере)
+    raw[:, :, 1] *= -1; raw[:, :, 2] *= -1
+    # пропуски детекции -> интерполяция по времени
+    tt = np.arange(len(raw))
+    for j in range(33):
+        for k in range(3):
+            ok = ~np.isnan(raw[:, j, k])
+            if ok.any() and (~ok).any():
+                raw[:, j, k] = np.interp(tt, tt[ok], raw[ok, j, k])
+    # коррекция перепутанных лево/право (на безликом манекене в профиль MediaPipe путает стороны)
+    PAIRS = [(11, 12), (13, 14), (15, 16), (23, 24), (25, 26), (27, 28), (31, 32), (7, 8), (19, 20), (17, 18)]
+    nsw = 0
+    prev = raw[0].copy()
+    for t in range(1, len(raw)):
+        keep = sum(np.linalg.norm(raw[t, a] - prev[a]) + np.linalg.norm(raw[t, b] - prev[b]) for a, b in PAIRS)
+        swp = sum(np.linalg.norm(raw[t, b] - prev[a]) + np.linalg.norm(raw[t, a] - prev[b]) for a, b in PAIRS)
+        if swp < 0.6 * keep and keep > 0.25:
+            for a, b in PAIRS: raw[t, [a, b]] = raw[t, [b, a]]
+            nsw += 1
+        prev = raw[t].copy()
+    print('коррекций лево/право на рендере:', nsw)
     for j in range(33):
         raw[:, j] = savgol_filter(raw[:, j], 9, 2, axis=0)
     res = angles(from_mp(raw))
@@ -61,7 +82,7 @@ def table(other, title):
         L.append(f"| {pn} | " + " | ".join(f"{v:.0f}" for v in row) + f" | **{np.mean(row):.0f}** |")
     tot = np.mean(allv, axis=0)
     L.append("| **Весь ролик** | " + " | ".join(f"**{v:.0f}**" for v in tot) + f" | **{tot.mean():.0f}** |")
-    corr = np.mean([np.corrcoef(ref[n][:N], other[n][:N])[0, 1] for n in names])
+    corr = np.nanmean([np.corrcoef(ref[n][:N], other[n][:N])[0, 1] for n in names])
     L += ["", f"Средняя корреляция Пирсона по кривым углов: **{corr:.2f}**.", ""]
     return "\n".join(L), float(tot.mean()), float(corr)
 
@@ -72,7 +93,7 @@ md.append(t1)
 summary = dict(bvh_mae=m1, bvh_corr=c1)
 if res:
     t2, m2, c2 = table(res, "B. Повторная детекция MediaPipe на отрендеренном персонаже против эталона (сквозная проверка)")
-    md.append(t2); summary.update(render_mae=m2, render_corr=c2)
+    md.append(t2); summary.update(render_mae=m2, render_corr=c2, lr_swaps_on_render=nsw)
     md.append("Примечание: на манекене MediaPipe может ошибаться сам (нетипичная внешность, другой ракурс камеры 3/4), поэтому раздел B — оценка сверху по ошибке.")
 open(out_md, 'w').write("\n".join(md))
 json.dump(summary, open(out_md.replace('.md', '.json'), 'w'), indent=1)

@@ -50,6 +50,41 @@ P = W[:, :, :3].copy()
 P[:, :, 1] *= -1
 P[:, :, 2] *= -1
 VIS = W[:, :, 3]
+# ---------- 1b. гибрид: x,y — из 2D-ориентиров кадра (точнее в плоскости камеры), глубина z — из мировых координат MediaPipe
+import os
+HYBRID = os.environ.get('HYBRID', '0') == '1'
+PITCH_CORR_DEG = None
+P_WORLD = P.copy()   # для длин костей (антропометрия по мировым координатам)
+if HYBRID:
+    _hw = (W[:, 23, :3] + W[:, 24, :3]) / 2; _nw = (W[:, 11, :3] + W[:, 12, :3]) / 2
+    _hi = (IMG[:, 23, :2] + IMG[:, 24, :2]) / 2; _ni = (IMG[:, 11, :2] + IMG[:, 12, :2]) / 2
+    _l2 = np.linalg.norm(_ni - _hi, axis=1)
+    _top = _l2 > np.percentile(_l2, 70)
+    _s = float(np.median(np.linalg.norm((_nw - _hw)[_top], axis=1) / _l2[_top]))
+    P[:, :, 0] = (IMG[:, :, 0] - _hi[:, None, 0]) * _s
+    P[:, :, 1] = -(IMG[:, :, 1] - _hi[:, None, 1]) * _s
+
+    # поправка тангажа тела: глубина торса из ограничения длины (проекция в кадре + известная длина), знак — от MediaPipe
+    _T = float(np.median(np.linalg.norm((_nw - _hw), axis=1)))
+    _sc = _T / float(np.percentile(_l2, 95))           # масштаб: в кадре с максимальной проекцией торс параллелен плоскости кадра
+    _a = np.minimum(_l2 * _sc, _T)
+    _dc = np.sqrt(np.maximum(_T ** 2 - _a ** 2, 0.0))
+    _tv = (P[:, 11, :] + P[:, 12, :]) / 2 - (P[:, 23, :] + P[:, 24, :]) / 2   # торс в текущих (гибридных) координатах
+    _sign = np.sign(_tv[:, 2]); _sign[_sign == 0] = 1
+    _lean_c = np.arctan2(_sign * _dc, np.abs(_tv[:, 1]) + 1e-9)
+    _lean_m = np.arctan2(_tv[:, 2], np.abs(_tv[:, 1]) + 1e-9)
+    _dlt = np.clip(_lean_c - _lean_m, np.radians(-25), np.radians(25))
+    _dlt = savgol_filter(_dlt, 15, 2)
+    if os.environ.get('PITCH', '0') != '1':   # проверено: ухудшает (чувствительно к перспективному масштабу) -> выключено
+        _dlt = _dlt * 0
+    _hc = (P[:, 23, :] + P[:, 24, :]) / 2
+    _c, _sn = np.cos(_dlt), np.sin(_dlt)
+    _rel = P - _hc[:, None, :]
+    _y, _z = _rel[:, :, 1].copy(), _rel[:, :, 2].copy()
+    P[:, :, 1] = _hc[:, None, 1] + _c[:, None] * _y - _sn[:, None] * _z
+    P[:, :, 2] = _hc[:, None, 2] + _sn[:, None] * _y + _c[:, None] * _z
+    PITCH_CORR_DEG = (float(np.degrees(np.abs(_dlt)).mean()), float(np.degrees(np.abs(_dlt)).max()))
+
 
 # ---------- 2. One Euro фильтр
 def one_euro(x, fps, mincutoff=1.2, beta=0.6, dcutoff=1.0):
@@ -109,18 +144,22 @@ mlen = lambda a, b: med(np.linalg.norm(a - b, axis=-1))
 
 # ---------- 4. фиксированные длины костей (медиана, симметризация)
 torso = mlen(NK, H)
+_g = lambda i: P_WORLD[:, i, :]
+_mid = lambda a, b: (a + b) / 2
+_ml = lambda a, b: float(np.nanmedian(np.linalg.norm(a - b, axis=-1)))
 L = dict(
-    torso=torso,
-    shoulder_half=(mlen(SHL, SHR)) / 2,
-    hip_half=(mlen(HPL, HPR)) / 2,
-    ua=(mlen(SHL, ELL) + mlen(SHR, ELR)) / 2,
-    la=(mlen(ELL, WRL) + mlen(ELR, WRR)) / 2,
-    hand=(mlen(WRL, HDL) + mlen(WRR, HDR)) / 2,
-    ul=(mlen(HPL, KNL) + mlen(HPR, KNR)) / 2,
-    ll=(mlen(KNL, ANL) + mlen(KNR, ANR)) / 2,
-    foot=(mlen(ANL, TOL) + mlen(ANR, TOR)) / 2,
-    neck_head=mlen(EAR, NK),
+    torso=_ml(_mid(_g(11), _g(12)), _mid(_g(23), _g(24))),
+    shoulder_half=_ml(_g(11), _g(12)) / 2,
+    hip_half=_ml(_g(23), _g(24)) / 2,
+    ua=(_ml(_g(11), _g(13)) + _ml(_g(12), _g(14))) / 2,
+    la=(_ml(_g(13), _g(15)) + _ml(_g(14), _g(16))) / 2,
+    hand=(_ml(_g(15), _mid(_g(19), _g(17))) + _ml(_g(16), _mid(_g(20), _g(18)))) / 2,
+    ul=(_ml(_g(23), _g(25)) + _ml(_g(24), _g(26))) / 2,
+    ll=(_ml(_g(25), _g(27)) + _ml(_g(26), _g(28))) / 2,
+    foot=(_ml(_g(27), _g(31)) + _ml(_g(28), _g(32))) / 2,
+    neck_head=_ml(_mid(_g(7), _g(8)), _mid(_g(11), _g(12))),
 )
+torso = L['torso']
 ANKLE_H = 0.07
 # масштаб: приводим рост к реалистичному? Оставляем метрику MediaPipe (м), но фиксируем
 height = L['ul'] + L['ll'] + ANKLE_H + L['torso'] + L['neck_head'] + 0.12
@@ -371,7 +410,7 @@ metrics = dict(
     jitter_raw_m_per_frame2=raw_j, jitter_filtered_m_per_frame2=fil_j,
     jitter_reduction=float(1 - fil_j / raw_j),
     foot_slide_before_m_s=slide_before, foot_slide_after_m_s=slide_after,
-    low_conf_segments_s=segs, source_rotated_head_frames_held=rotated_head_frames, lr_swap_corrections_frames=swap_frames, m_per_img_unit=m_per_unit, bone_lengths_m={k: round(v, 3) for k, v in L.items()},
+    low_conf_segments_s=segs, hybrid_2d_xy=HYBRID, pitch_correction_deg_mean_max=PITCH_CORR_DEG, source_rotated_head_frames_held=rotated_head_frames, lr_swap_corrections_frames=swap_frames, m_per_img_unit=m_per_unit, bone_lengths_m={k: round(v, 3) for k, v in L.items()},
     root_x_range_m=[float(root_x.min()), float(root_x.max())], root_z_range_m=[float(root_z.min()), float(root_z.max())],
 )
 json.dump(metrics, open(out + '_metrics.json', 'w'), indent=1, ensure_ascii=False)

@@ -1,0 +1,113 @@
+{
+ "frames": 1665,
+ "fps": 30.0,
+ "detect_rate": 1.0,
+ "conf_frames_ratio_all_key_joints": 0.721921921921922,
+ "mean_visibility": {
+  "L_elbow": 0.826,
+  "R_elbow": 0.829,
+  "L_wrist": 0.821,
+  "R_wrist": 0.849,
+  "L_knee": 0.895,
+  "R_knee": 0.923,
+  "L_ankle": 0.89,
+  "R_ankle": 0.898
+ },
+ "jitter_raw_m_per_frame2": 0.026017360389232635,
+ "jitter_filtered_m_per_frame2": 0.0039001170080155134,
+ "jitter_reduction": 0.850095591955993,
+ "foot_slide_before_m_s": 0.4272397386503142,
+ "foot_slide_after_m_s": 0.23503287635860523,
+ "low_conf_segments_s": [
+  [
+   3.2,
+   3.87
+  ],
+  [
+   7.4,
+   8.5
+  ],
+  [
+   9.63,
+   10.6
+  ],
+  [
+   12.0,
+   12.97
+  ],
+  [
+   13.13,
+   13.3
+  ],
+  [
+   13.77,
+   14.17
+  ],
+  [
+   14.8,
+   15.0
+  ],
+  [
+   20.87,
+   21.37
+  ],
+  [
+   21.63,
+   24.33
+  ],
+  [
+   28.1,
+   29.43
+  ],
+  [
+   31.2,
+   36.0
+  ],
+  [
+   51.9,
+   53.27
+  ]
+ ],
+ "hybrid_2d_xy": true,
+ "pitch_correction_deg_mean_max": [
+  0.0,
+  0.0
+ ],
+ "source_rotated_head_frames_held": 4,
+ "lr_swap_corrections_frames": [
+  438,
+  439,
+  440,
+  441,
+  442,
+  443,
+  444,
+  445,
+  446,
+  447,
+  448,
+  755
+ ],
+ "m_per_img_unit": 2.626201629638672,
+ "bone_lengths_m": {
+  "torso": 0.491,
+  "shoulder_half": 0.159,
+  "hip_half": 0.104,
+  "ua": 0.238,
+  "la": 0.212,
+  "hand": 0.08,
+  "ul": 0.348,
+  "ll": 0.405,
+  "foot": 0.093,
+  "neck_head": 0.152,
+  "height_est": 1.587
+ },
+ "root_x_range_m": [
+  -0.5140159281434608,
+  0.5776817945285886
+ ],
+ "root_z_range_m": [
+  -0.4230986176857259,
+  0.2963678362760237
+ ]
+}
